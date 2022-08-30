@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.yama.mall</groupId>
+    <artifactId>gulimall</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>gulimall</name>
+
+    <packaging>pom</packaging>
+    <description>聚合服务，仅作为聚合项目，便于maven操作；不做依赖管理,不以此项目为父项目继承</description>
+
+    <!--进行项目的聚合操作,通过moudel模块-->
+    <modules>
+        <module>gulimall-order</module>
+        <module>gulimall-coupon</module>
+        <module>gulimall-member</module>
+        <module>gulimall-product</module>
+        <module>gulimall-ware</module>
+    </modules>
+
+</project>

@@ -9,3 +9,18 @@ buildNumber.properties
 .mvn/timing.properties
 # https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
+#配置提交前需要忽略的文件
+
+#表示当前同级目录下的.idea文件
+.idea
+#表示任意路径下的mvnw文件
+**/mvnw
+**/mvnw.cmd
+**/.mvn/
+#表示任意路径下target文件夹以及其下文件
+**/target/
+#表示所有子目录下的忽略文件
+**/.gitignore
+
+
+
