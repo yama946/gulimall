@@ -1,0 +1,5 @@
+spring.application.name=gulimall-gateway
+spring.cloud.nacos.config.server-addr=127.0.0.1:8848
+  
+  #配置命名空间，默认规则：spring.cloud.nacos.config.namespace=命名空间ID
+spring.cloud.nacos.config.namespace=74249ad5-3595-48f9-a787-9367f03a1aed

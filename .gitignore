@@ -22,6 +22,8 @@ buildNumber.properties
 #表示所有子目录下的忽略文件
 **/.gitignore
 **/*.iml
+**/application-dev.yml
+**/bootstrap.properties
 
 
 

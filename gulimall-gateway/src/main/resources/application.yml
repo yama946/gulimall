@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: gulimall-gateway
+  profiles:
+    active: dev
+
+#配置服务的端口号
+server:
+  port: 88

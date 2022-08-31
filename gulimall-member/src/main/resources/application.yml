@@ -6,6 +6,10 @@ spring:
     url: jdbc:mysql://localhost:3306/gulimall_ums?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
+  application:
+    name: gulimall-coupon
+  profiles:
+    active: dev
 
 # 配置mybatis-plus
 mybatis-plus:
