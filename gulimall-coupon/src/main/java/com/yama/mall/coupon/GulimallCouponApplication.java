@@ -18,8 +18,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
  * 3.需要给配置中心添加一个叫(gulimall-coupon.properties)数据集（Data Id）.DataID默认规则：应用名.properties
  * 4.给应用名.properties添加需要动态刷新的配置
  * 5.动态配置所需要的注解：
- * @RefreshScope：动态获取并刷新配置
- * @Value("${配置项}")
+ *          主类配置：@RefreshScope：动态获取并刷新配置，否则配置中心数据只读取一次，更改不会刷新
+ *          @Value("${配置项}")
  *
  * 注意：如果配置中心和当前应用的配置文件中配置了相同的项，优先使用配置中心中的配置
  *

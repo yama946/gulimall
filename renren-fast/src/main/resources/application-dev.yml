@@ -32,6 +32,10 @@ spring:
                 wall:
                     config:
                         multi-statement-allow: true
+    cloud:
+      nacos:
+        discovery:
+          server-addr: 124.223.201.122:8800
 
 
 ##多数据源的配置
@@ -47,3 +51,4 @@ spring:
 #      url: jdbc:postgresql://localhost:5432/renren_security
 #      username: renren
 #      password: 123456
+

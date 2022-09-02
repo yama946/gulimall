@@ -1,25 +1,25 @@
-#spring:
-#  #  配置数据源，以及数据库连接池
-#  datasource:
-#    username: root
-#    password: yanruyi
-#    url: jdbc:mysql://localhost:3306/gulimall_sms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    type: com.alibaba.druid.pool.DruidDataSource
-#  application:
-#    name: gulimall-coupon
-#  profiles:
-#    active: dev
-#
-## 配置mybatis-plus
-#mybatis-plus:
-#  #  配置mapper配置文件的位置，其中classpath*表示包括其他依赖项目的classpath，不带*表示仅仅自己的classpath路径
-#  mapper-locations: classpath*:/mapper/**/*.xml
-#  #  配置主键自增，也可以在类上通过注解配置，这里为了方便配置，对所有实体类生效
-#  global-config:
-#    db-config:
-#      id-type: auto
-#
-##配置服务的端口号
-#server:
-#  port: 7000
+spring:
+  #  配置数据源，以及数据库连接池
+  datasource:
+    username: root
+    password: yanruyi
+    url: jdbc:mysql://localhost:3306/gulimall_sms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+  application:
+    name: gulimall-coupon
+  profiles:
+    active: dev
+
+# 配置mybatis-plus
+mybatis-plus:
+  #  配置mapper配置文件的位置，其中classpath*表示包括其他依赖项目的classpath，不带*表示仅仅自己的classpath路径
+  mapper-locations: classpath*:/mapper/**/*.xml
+  #  配置主键自增，也可以在类上通过注解配置，这里为了方便配置，对所有实体类生效
+  global-config:
+    db-config:
+      id-type: auto
+
+#配置服务的端口号
+server:
+  port: 7000

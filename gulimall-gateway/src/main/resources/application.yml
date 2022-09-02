@@ -1,9 +1,28 @@
+#配置服务的端口号
+server:
+  port: 88
+
 spring:
   application:
     name: gulimall-gateway
   profiles:
     active: dev
+  #通过网关进行指定访问
+  cloud:
+    gateway:
+      routes:
+        - id: product-route
+          uri: lb://gulimall-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /$\{segment}
+        - id: admin-route
+          uri: lb://renren-fast
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /renren-fast/$\{segment}
+        
 
-#配置服务的端口号
-server:
-  port: 88
+  
