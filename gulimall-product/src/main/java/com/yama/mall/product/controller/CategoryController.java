@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ import com.yama.common.utils.R;
  */
 @RestController
 @RequestMapping("product/category")
+@Slf4j
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
@@ -50,7 +52,9 @@ public class CategoryController {
     public R info(@PathVariable("catId") Long catId){
 		CategoryEntity category = categoryService.getById(catId);
 
-        return R.ok().put("category", category);
+//        return R.ok().put("category", category);
+        //这里修改参数名的目的是直接解构赋值到前端接受的data中
+        return R.ok().put("data", category);
     }
 
     /**
@@ -64,6 +68,18 @@ public class CategoryController {
         return R.ok();
     }
 
+    /**
+     * 拖拽功能，批量修改
+     * @param category
+     * @return
+     */
+    @RequestMapping("/update/sort")
+    //@RequiresPermissions("product:category:update")
+    public R updateSort(@RequestBody CategoryEntity[] category){
+        categoryService.updateBatchById(Arrays.asList(category));
+
+        return R.ok();
+    }
     /**
      * 修改
      */

@@ -66,4 +66,62 @@ public @interface TableLogic {
 ```
 
 
+### 知识点9：categoryEntity.getParentCid() == root.getCatId()比对失败无法获取子类。
+
+categoryEntity.getParentCid()，返回的是一个Long包裹类对象类型
+root.getCatId()，返回的也是要给Long类型的包装类型。
+两者通过“==”比较，比较的是地址而不是值。
+
+“==”符号，比较是否相等。
+基本类型之间的比较，是比较值
+对象之间比较，是比较的地址
+
+示例解析：
+
+```
+	public void testEquals() {
+		int int1 = 12;
+		int int2 = 12;
+		
+		Integer integer1 = new Integer(12);
+		Integer integer2 = new Integer(12);
+		Integer integer3 = new Integer(127);
+		
+		Integer a1 = 127;
+		Integer a2 = 127;
+		
+		Integer a = 128;
+		Integer b = 128;
+		System.out.println("int1 == int2 -> " + (int1 == int2));					
+		System.out.println("int1 == integer1 -> " + (int1 == integer1));			
+		System.out.println("integer1 == integer2 -> " + (integer1 == integer2));	
+		System.out.println("integer3 == a1 -> " + (integer3 == a1));				
+		System.out.println("a1 == a2 -> " + (a1 == a2));							
+		System.out.println("a == b -> " + (a == b));													
+	}   
+```
+
+```
+    1、   int1 == int2 -> true
+    解析：
+    基本类型通过==比较，比较的就是值
+    2、   int1 == integer1 -> true
+    解析：
+    Integer是int的封装类，当Integer与int进行==比较时，Integer就会拆箱成一个int类型，所以还是相当于两个int类型进行比较，
+    这里的Integer,不管是直接赋值，还是new创建的对象，只要跟int比较就会拆箱为int类型，所以就是相等的。
+    3、   integer1 == integer2 -> false
+    解析：
+    两个都是对象类型，而且不会进行拆箱比较，比较的是地址，因此不等
+    4、   integer3 == a1 -> false
+    解析：
+    integer3是一个对象类型，而a1是一个常量它们存放内存的位置不一样，所以也不等
+    5、   a1 == a2 -> true
+    6、   a == b -> false
+    解析：
+    jvm会将-128-127的基本类型包装类，进行缓存，如果再次使用直接从缓存获取，而不是重新创建，因此127是相同的。
+    128不会被缓存，会在内存中重新创建，因此两者对象地址不同，返回值为false。
+```
+
+
+
 
