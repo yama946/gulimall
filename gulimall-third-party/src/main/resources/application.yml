@@ -1,0 +1,12 @@
+#配置应用名
+spring:
+  application:
+    name: gulimall-third-party
+  profiles:
+    active: dev
+#配置oss信息
+
+#配置服务开启端口
+server:
+  port: 12000
+  

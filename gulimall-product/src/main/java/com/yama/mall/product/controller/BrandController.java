@@ -26,7 +26,7 @@ import com.yama.common.utils.R;
  * @date 2022-08-30 17:50:51
  */
 @RestController
-@RequestMapping("product/brand")
+@RequestMapping("/product/brand")
 public class BrandController {
     @Autowired
     private BrandService brandService;
