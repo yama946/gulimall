@@ -90,12 +90,12 @@ public class BrandController {
     }
 
     /**
-     * 修改
+     * 修改,同步更新其他关联表中的数据
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:brand:update")
     public R update(@RequestBody BrandEntity brand){
-		brandService.updateById(brand);
+		brandService.updateDetail(brand);
 
         return R.ok();
     }

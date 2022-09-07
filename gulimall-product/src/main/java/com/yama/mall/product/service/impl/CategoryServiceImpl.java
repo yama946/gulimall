@@ -7,19 +7,24 @@ import com.yama.common.utils.PageUtils;
 import com.yama.common.utils.Query;
 import com.yama.mall.product.dao.CategoryDao;
 import com.yama.mall.product.entity.CategoryEntity;
+import com.yama.mall.product.service.CategoryBrandRelationService;
 import com.yama.mall.product.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
 @Service("categoryService")
 @Slf4j
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+    @Autowired
+    private CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -75,4 +80,63 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         baseMapper.deleteBatchIds(asList);
     }
 
+    /**
+     * 通用写法
+     * @param catelogId
+     * @return
+     */
+    /*@Override
+    public Long[] getCatelogPath(Long catelogId) {
+        List<Long> list = new ArrayList<>();
+
+        list.add(catelogId);
+
+        CategoryEntity byId = baseMapper.selectById(catelogId);
+
+        while(byId.getParentCid()!=0){
+            long parentCid = byId.getParentCid();
+            list.add(0,parentCid);
+            byId=baseMapper.selectById(parentCid);
+        }
+        return  list.toArray(new Long[list.size()]);
+    }*/
+
+    /**
+     * 更新关联表数据
+     * @param category
+     */
+    @Transactional
+    @Override
+    public void updateCascade(CategoryEntity category) {
+        this.updateById(category);
+        if (!StringUtils.isEmpty(category.getName())){
+            categoryBrandRelationService.updateCatetory(category.getCatId(),category.getName());
+        }
+    }
+
+    /**
+     * 递归写法
+     * @param catelogId
+     * @return
+     */
+    @Override
+    public Long[] getCatelogPath(Long catelogId) {
+        List<Long> paths = new ArrayList<>();
+
+        List<Long> parentPath = findParentPath(catelogId, paths);
+
+        //集合反转
+        Collections.reverse(parentPath);
+
+        return  parentPath.toArray(new Long[parentPath.size()]);
+    }
+
+    private List<Long> findParentPath(Long catelogId,List<Long> paths){
+        paths.add(catelogId);
+        CategoryEntity byId = this.getById(catelogId);
+        if (byId.getParentCid()!=0){
+            findParentPath(byId.getParentCid(),paths);
+        }
+        return paths;
+    }
 }

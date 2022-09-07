@@ -1,5 +1,6 @@
 package com.yama.mall.product.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -25,5 +26,29 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 
         return new PageUtils(page);
     }
+
+    /**
+     * 更新关联表数据
+     * @param catId
+     * @param name
+     */
+    @Override
+    public void updateCatetory(Long catId, String name) {
+        this.baseMapper.updateCategory(catId,name);
+    }
+
+    /**
+     * 更新关联表数据
+     * @param brandId
+     * @param name
+     */
+    @Override
+    public void updateBrand(Long brandId, String name) {
+        CategoryBrandRelationEntity categoryBrandRelationEntity = new CategoryBrandRelationEntity();
+        categoryBrandRelationEntity.setBrandId(brandId);
+        categoryBrandRelationEntity.setBrandName(name);
+        this.update(categoryBrandRelationEntity,new UpdateWrapper<CategoryBrandRelationEntity>().eq("brand_id",brandId));
+    }
+
 
 }

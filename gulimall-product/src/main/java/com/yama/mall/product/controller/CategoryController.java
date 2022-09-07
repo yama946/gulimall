@@ -37,7 +37,7 @@ public class CategoryController {
     /**
      *  查出所有分类以及子分类，以树形结构组装起来
      */
-    @RequestMapping("/list/menu")
+    @RequestMapping("/list/tree")
     public R list(){
         List<CategoryEntity> entities =  categoryService.listWithTree();
         return R.ok().put("data", entities);
@@ -86,7 +86,7 @@ public class CategoryController {
     @RequestMapping("/update")
     //@RequiresPermissions("product:category:update")
     public R update(@RequestBody CategoryEntity category){
-		categoryService.updateById(category);
+		categoryService.updateCascade(category);
 
         return R.ok();
     }

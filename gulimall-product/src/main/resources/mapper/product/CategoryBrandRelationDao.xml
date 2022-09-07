@@ -11,6 +11,10 @@
         <result property="brandName" column="brand_name"/>
         <result property="catelogName" column="catelog_name"/>
     </resultMap>
+    <!--使用原生的sql语句实现，关联表数据更新-->
+    <update id="updateCategory">
+        update pms_category_brand_relation set catelog_name=#{name} where catelog_id=#{catId}
+    </update>
 
 
 </mapper>

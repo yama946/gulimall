@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 /**
@@ -93,8 +94,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
  */
 @RefreshScope
 @EnableDiscoveryClient
-@MapperScan(basePackages = "com.yama.mall.product.dao")
+@MapperScan(basePackages = {"com.yama.mall.product.dao","com.yama.mall.common.config"})
 @SpringBootApplication
+@ComponentScan(basePackages = "com.yama.mall")
 public class GulimallProductApplication {
 
     public static void main(String[] args) {
