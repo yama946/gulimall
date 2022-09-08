@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.yama.mall.product.entity.BrandEntity;
 import com.yama.mall.product.service.BrandService;
 import com.yama.mall.product.service.CategoryService;
+import com.yama.mall.product.vo.BrandVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.yama.mall.product.entity.CategoryBrandRelationEntity;
 import com.yama.mall.product.service.CategoryBrandRelationService;
@@ -41,6 +40,31 @@ public class CategoryBrandRelationController {
 
     @Autowired
     private BrandService brandService;
+
+    /**
+     * 获取分类关联的品牌信息
+     * @param catId
+     * @return
+     *
+     * 1.Controller:处理请求，接受和校验数据
+     * 2.Service接受controller传来的数据，进行业务处理
+     * 3.Controller接受Service处理完的数据封装页面指定的vo返回
+     */
+    ///product/categorybrandrelation/brands/list
+    @GetMapping("/brands/list")
+    public R relationBrandsList(@RequestParam(value = "catId",required = true) Long catId){
+        List<BrandEntity> vos = categoryBrandRelationService.getBrandsByCateId(catId);
+        List<BrandVO> collect = vos.stream().map(brandEntity -> {
+            BrandVO brandVO = new BrandVO();
+            brandVO.setBrandId(brandEntity.getBrandId());
+            brandVO.setBrandName(brandEntity.getName());
+            return brandVO;
+        }).collect(Collectors.toList());
+        return R.ok().put("data",collect);
+    }
+
+
+
 
     /**
      * 获取当前品牌关联的所有列表分类

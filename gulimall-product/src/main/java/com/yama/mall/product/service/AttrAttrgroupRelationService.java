@@ -3,6 +3,7 @@ package com.yama.mall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yama.common.utils.PageUtils;
 import com.yama.mall.product.entity.AttrAttrgroupRelationEntity;
+import com.yama.mall.product.vo.AttrGroupRelationVO;
 
 import java.util.Map;
 
@@ -16,5 +17,9 @@ import java.util.Map;
 public interface AttrAttrgroupRelationService extends IService<AttrAttrgroupRelationEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void attrGroupRelationDelete(AttrGroupRelationVO[] attrGroupRelationVO);
+
+    void attrGroupRelationSave(AttrGroupRelationVO[] attrGroupRelationVO);
 }
 

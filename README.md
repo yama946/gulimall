@@ -151,6 +151,10 @@ root.getCatId()，返回的也是要给Long类型的包装类型。
 
 ### 知识点13：数据库中表的使用
 
+不进行联表查询的原因：
+
+防止联表查询，在大数据情况下，会出现巨量表的出现，比如10000与10000的数据的表，会生成一个亿级的笛卡尔积；
+
 在进行业务查询时，我们尽量不做联表查询，而是多做分开查询进行合并。
 建立中间表放置冗余字段来加快查询，而不是做联表查询，但是基于这种状况，当主表做数据更新操作，在业务上为保持同步，
 我们需要为建立方便查询的冗余字段也同时进行数据同步更新操作。
@@ -162,3 +166,50 @@ root.getCatId()，返回的也是要给Long类型的包装类型。
 起因：更新品牌、分类的同时，更新品牌分类关联表，这种操作涉及到事务需要添加事务的支持。需要在service上添加事务注解
 
 问题：mybatisplus中需要添加开启事务的注解@EnableTransactionManagement事务才起效，是基于老版本的mybatis吗？
+
+### 知识点14：mysql数据库执行语句的优化
+传统实现方法：
+    /**
+     * 删除属性分组与基本属性的关联关系
+     * @param attrGroupRelationVO
+     */
+    @Override
+    public void attrGroupRelationDelete(AttrGroupRelationVO[] attrGroupRelationVO) {
+        Stream.of(attrGroupRelationVO).forEach((attrRelation)->{
+            this.remove(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id",attrRelation.getAttrId())
+                    .eq("attr_group_id",attrRelation.getAttrGroupId()));
+        });
+    }
+对于批量删除时的语句：遍历数组中所有对象，每个对象执行一次delete语句
+删除3个元素执行三次：
+DELETE FROM pms_attr_attrgroup_relation WHERE (attr_id = ? AND attr_group_id = ?)
+DELETE FROM pms_attr_attrgroup_relation WHERE (attr_id = ? AND attr_group_id = ?)
+DELETE FROM pms_attr_attrgroup_relation WHERE (attr_id = ? AND attr_group_id = ?)
+
+优化方法：
+自定义删除方法不使用默认删除方法-----------自定义sql语句方法：
+DELETE FROM pms_attr_attrgroup_relation WHERE (attr_id = ? AND attr_group_id = ?) or (attr_id = ? AND attr_group_id = ?) or (attr_id = ? AND attr_group_id = ?)
+这样仅仅发起一次连接请求，达到优化sql数据库执行性能的目的
+
+void deleteBatchRelation(@Param("entities") List<AttrAttrgroupRelationEntity> entities);
+
+<delete id="deleteBatchRelation">
+    DELETE from
+    pms_attr_attrgroup_relation
+    <where>
+        <foreach collection="entities" item="item" separator=" or ">
+            (attr_id=#{item.attrId} and attr_group_id=#{item.attrGroupId})
+        </foreach>
+    </where>
+</delete>
+
+### 知识点15：当mapper中的方法中添加@Param注解后，标签中不添加parameterType=""属性
+
+注意此时的参数取值也有所不同，
+比如Person{name:"yanmu",age:29}
+使用parameterType=""取值方式为：#{name}
+使用@Param标注：取值方式为#{person.name}
+
+
+### 知识点16：在当前service中调用其他方法，应该注入其Service方法，而不是mapper方法，因为service方法更丰富
+这只是一个建议，
