@@ -213,3 +213,90 @@ void deleteBatchRelation(@Param("entities") List<AttrAttrgroupRelationEntity> en
 
 ### 知识点16：在当前service中调用其他方法，应该注入其Service方法，而不是mapper方法，因为service方法更丰富
 这只是一个建议，
+
+
+### 问题2：远程调用传输的实体类是否要求可序列化。
+
+
+### 知识点17：设置改变隔离级别，在debug过程中方便查看数据库数据的变化，隔离级别只是为了防止多线程问题导致数据搓读
+** 隔离级别的改变，并不影响事务，如果出现异常，即使数据库数据设置了，也会回滚取消**
+**设置隔离级别的语句：set session transaction isolation level uncommitted
+
+
+### 知识点18：BigDecimal的使用
+t.getMemberPrice().compareTo(new BigDecimal("0"))==1
+compareTo返回3个值：-1(小于)，0(等于)，1(大于)
+new BigDecimal时，推荐使用字符串创建，据说能避免数据精度的缺失
+
+### 知识点19：无论任何状况，都可将请求传递过来的键值对传递给Map集合对象
+
+
+### 知识点20：mybatis-plus条件构建时，使用and()与不使用生成的sql区别
+```
+        String key = (String) params.get("key");
+        if ( key!= null && key.length() > 0){
+            wrapper.and(t->t.eq("id",key).or().like("spu_name",key));
+        }
+        //不使用and()连接sql语句：catalog_id=1 and id=1 or spu_name like xxx（此时catalog_id就不一定等于指定值）
+        //使用and()连接的sql语句：catalog_id=1 and (id=1 or spu_name like xxx):此时就能保证catalog_id满足条件，符合业务要求
+        String catelogId = (String) params.get("catelogId");
+        if (!StringUtils.isEmpty(catelogId)){
+            //视频实现下方3个同：（直接eq不使用and连接）wrapper..eq("catalog_id",catelogId)
+            wrapper.and(a->a.eq("catalog_id",catelogId));
+        }
+```
+
+### 知识点21：spring.jackson.datafomat配置时间对象转换成json的格式
+
+```yaml
+# 使用jackson.data-format配置所有时间数据转换json都会转换成配置的格式
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+```
+
+### 知识点22：@EnableTransactionManagement//用来开启事务，有时候还放到mybatis-plus配置类上，需要测试不添加是否默认开启？？？？？？？？？？？？
+
+
+### 知识点23：@MapperScan注解的使用
+```java
+//单独配置注入不成功，MapperScan只能扫描注入指定的mapper文件，无法扫描注入cong，componte等注解
+          @MapperScan(basePackages = {"com.yama.mall.ware.dao","com.yama.mall.common.config"})
+          @ComponentScan(basePackages = "com.yama.mall")
+```
+
+### 知识点24： Mybatis-plus自动填充功能
+```java
+@Component
+public class MyMetaObjectHandler implements MetaObjectHandler {
+
+    @Override
+    public void insertFill(MetaObject metaObject) {
+        log.info("start insert fill ....");
+        this.strictInsertFill(metaObject, "createTime", Date.class, new Date()); // 起始版本 3.3.0(推荐使用)
+        this.strictInsertFill(metaObject, "updateTime", Date.class, new Date()); // 起始版本 3.3.0(推荐使用)
+    }
+
+    @Override
+    public void updateFill(MetaObject metaObject) {
+        log.info("start update fill ....");
+        this.strictUpdateFill(metaObject, "updateTime", LocalDateTime.class, LocalDateTime.now()); // 起始版本 3.3.0(推荐)
+    }
+}
+```
+
+
+```
+	/**
+	 * 
+	 */
+	@TableField(fill = FieldFill.INSERT)
+	private Date createTime;
+	/**
+	 * 
+	 */
+	@TableField(fill = FieldFill.INSERT_UPDATE)
+	private Date updateTime;
+```
+
+需要填充的属性：	private Date updateTime;
+this.strictInsertFill(metaObject, "updateTime"（要填充的属性名）, Date.class(要和填充属性数据类型相同), new Date()); // 起始版本 3.3.0(推荐使用)

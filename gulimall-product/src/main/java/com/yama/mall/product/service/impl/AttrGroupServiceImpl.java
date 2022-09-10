@@ -1,12 +1,21 @@
 package com.yama.mall.product.service.impl;
 
+import com.yama.mall.product.entity.AttrEntity;
+import com.yama.mall.product.service.AttrService;
+import com.yama.mall.product.vo.AttrGroupWithAttrsVO;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yama.common.utils.PageUtils;
-import com.yama.common.utils.Query;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.Query;
 
 import com.yama.mall.product.dao.AttrGroupDao;
 import com.yama.mall.product.entity.AttrGroupEntity;
@@ -16,6 +25,9 @@ import org.springframework.util.StringUtils;
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
+
+    @Autowired
+    private AttrService attrService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -46,6 +58,29 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
             IPage<AttrGroupEntity> page = this.page(new Query<AttrGroupEntity>().getPage(params), wrapper);
             return new PageUtils(page);
         }
+    }
+
+    /**
+     * 根据分类id查出所有分组以及组内的属性，属性要求都是基本属性，也就是规格参数
+     * @param catelogId
+     * @return
+     */
+    @Override
+    public List<AttrGroupWithAttrsVO> getAttrGroupWithattrsByCatelogId(Long catelogId) {
+        //1.查出所有分组
+        List<AttrGroupEntity> attrGroupEntitys = this.list(
+                new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catelogId));
+
+        //2.所有分组下关联的属性信息,并封装返回
+        List<AttrGroupWithAttrsVO> collect = attrGroupEntitys.stream().map(group -> {
+            AttrGroupWithAttrsVO attrsVO = new AttrGroupWithAttrsVO();
+            BeanUtils.copyProperties(group,attrsVO);
+            //使用已存在的方法
+            List<AttrEntity> releationAttr = attrService.getReleationAttr(attrsVO.getAttrGroupId());
+            attrsVO.setAttrs(releationAttr);
+            return attrsVO;
+        }).collect(Collectors.toList());
+        return collect;
     }
 
 }

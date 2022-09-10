@@ -10,14 +10,14 @@ import com.yama.mall.product.service.AttrAttrgroupRelationService;
 import com.yama.mall.product.service.AttrService;
 import com.yama.mall.product.service.CategoryService;
 import com.yama.mall.product.vo.AttrGroupRelationVO;
-import jdk.nashorn.internal.objects.annotations.Getter;
+import com.yama.mall.product.vo.AttrGroupWithAttrsVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.yama.mall.product.entity.AttrGroupEntity;
 import com.yama.mall.product.service.AttrGroupService;
-import com.yama.common.utils.PageUtils;
-import com.yama.common.utils.R;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.R;
 
 
 
@@ -43,6 +43,18 @@ public class AttrGroupController {
     @Autowired
     private AttrAttrgroupRelationService attrgroupRelationService;
 
+
+    /**
+     * /product/attrgroup/{catelogId}/withattr
+     */
+    @GetMapping("{catelogId}/withattr")
+    public R attrGroupWithattrs(@PathVariable("catelogId") Long catelogId){
+        //1.查出当前分类下的所有属性分组
+        //2.查出每个分组下的所有属性
+        List<AttrGroupWithAttrsVO> attrGroupWithAttrsVOS =
+                attrGroupService.getAttrGroupWithattrsByCatelogId(catelogId);
+        return R.ok().put("data",attrGroupWithAttrsVOS);
+    }
 
     /**
      * /product/attrgroup/attr/relation

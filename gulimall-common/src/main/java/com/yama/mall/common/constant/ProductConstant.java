@@ -1,4 +1,4 @@
-package com.yama.common.constant;
+package com.yama.mall.common.constant;
 
 import lombok.Data;
 import lombok.Getter;

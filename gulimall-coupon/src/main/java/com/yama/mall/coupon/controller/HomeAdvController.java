@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yama.mall.coupon.entity.HomeAdvEntity;
 import com.yama.mall.coupon.service.HomeAdvService;
-import com.yama.common.utils.PageUtils;
-import com.yama.common.utils.R;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.R;
 
 
 

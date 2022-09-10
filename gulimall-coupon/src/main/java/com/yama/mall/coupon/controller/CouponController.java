@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.yama.mall.coupon.entity.CouponEntity;
 import com.yama.mall.coupon.service.CouponService;
-import com.yama.common.utils.PageUtils;
-import com.yama.common.utils.R;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.R;
 
 
 

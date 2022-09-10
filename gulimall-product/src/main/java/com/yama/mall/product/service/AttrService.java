@@ -1,7 +1,7 @@
 package com.yama.mall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yama.common.utils.PageUtils;
+import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.product.entity.AttrEntity;
 import com.yama.mall.product.vo.AttrRespVO;
 import com.yama.mall.product.vo.AttrVO;

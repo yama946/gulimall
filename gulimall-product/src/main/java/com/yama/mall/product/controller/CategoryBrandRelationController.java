@@ -1,6 +1,5 @@
 package com.yama.mall.product.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.yama.mall.product.entity.CategoryBrandRelationEntity;
 import com.yama.mall.product.service.CategoryBrandRelationService;
-import com.yama.common.utils.PageUtils;
-import com.yama.common.utils.R;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.R;
 
 
 

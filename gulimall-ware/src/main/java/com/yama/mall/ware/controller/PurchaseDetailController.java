@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yama.mall.ware.entity.PurchaseDetailEntity;
 import com.yama.mall.ware.service.PurchaseDetailService;
-import com.yama.common.utils.PageUtils;
-import com.yama.common.utils.R;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.R;
 
 
 
@@ -32,6 +32,10 @@ public class PurchaseDetailController {
     private PurchaseDetailService purchaseDetailService;
 
     /**
+     * /ware/purchasedetail/list
+     *    key: '华为',//检索关键字
+     *    status: 0,//状态
+     *    wareId: 1,//仓库id
      * 列表
      */
     @RequestMapping("/list")

@@ -1,4 +1,4 @@
-package com.yama.common.exception;
+package com.yama.mall.common.exception;
 
 import lombok.Getter;
 

@@ -1,7 +1,7 @@
 package com.yama.mall.order.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yama.common.utils.PageUtils;
+import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.order.entity.OrderReturnApplyEntity;
 
 import java.util.Map;

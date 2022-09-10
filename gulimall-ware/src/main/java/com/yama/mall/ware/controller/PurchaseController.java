@@ -1,20 +1,18 @@
 package com.yama.mall.ware.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.yama.mall.ware.vo.MergeVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.yama.mall.ware.entity.PurchaseEntity;
 import com.yama.mall.ware.service.PurchaseService;
-import com.yama.common.utils.PageUtils;
-import com.yama.common.utils.R;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.R;
 
 
 
@@ -30,6 +28,42 @@ import com.yama.common.utils.R;
 public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;
+
+
+    ///ware/purchase/received
+    @PostMapping("/received")
+    public R received(@RequestBody List<Long> ids){
+        //TODO 细节查询属于自己的采购单才能领取，这里没有做
+        purchaseService.receivedPurchase(ids);
+        return R.ok();
+    }
+
+
+    /**
+     * /ware/purchase/merge
+     * 合并采购需求
+     * @param mergeVO
+     * @return
+     */
+    @PostMapping("/merge")
+    public R merge(@RequestBody MergeVO mergeVO){
+        purchaseService.mergePurchase(mergeVO);
+        return R.ok();
+    }
+
+
+
+    ///ware/purchase/unreceive/list
+    /**
+     * 查询未领取的采购单
+     */
+    @RequestMapping("/unreceive/list")
+    public R unreceiveList(@RequestParam Map<String, Object> params){
+        PageUtils page = purchaseService.queryPageUnreceiveList(params);
+
+        return R.ok().put("page", page);
+    }
+
 
     /**
      * 列表

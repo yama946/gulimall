@@ -1,7 +1,7 @@
 package com.yama.mall.ware.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yama.common.utils.PageUtils;
+import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.ware.entity.PurchaseDetailEntity;
 
 import java.util.Map;

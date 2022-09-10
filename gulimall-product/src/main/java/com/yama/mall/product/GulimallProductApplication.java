@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
@@ -92,6 +93,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
  * 当校验异常是我们如果在每个方法进行判断然后自定义封装，进行返回结果，会造成代码冗余现象
  * 使用SpringMVC提供的异常同一处理机制，使用注解异常配置：@ControllerAdvice
  */
+
+@EnableFeignClients(basePackages = "com.yama.mall.product.feign")
 @RefreshScope
 @EnableDiscoveryClient
 @MapperScan(basePackages = {"com.yama.mall.product.dao","com.yama.mall.common.config"})

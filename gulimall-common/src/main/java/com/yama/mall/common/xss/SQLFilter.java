@@ -6,9 +6,9 @@
  * 版权所有，侵权必究！
  */
 
-package com.yama.common.xss;
+package com.yama.mall.common.xss;
 
-import com.yama.common.utils.RRException;
+import com.yama.mall.common.utils.RRException;
 import org.apache.commons.lang.StringUtils;
 
 /**

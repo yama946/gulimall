@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yama.mall.ware.entity.WareSkuEntity;
 import com.yama.mall.ware.service.WareSkuService;
-import com.yama.common.utils.PageUtils;
-import com.yama.common.utils.R;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.R;
 
 
 
@@ -32,6 +32,9 @@ public class WareSkuController {
     private WareSkuService wareSkuService;
 
     /**
+     * /ware/waresku/list
+     *    wareId: 123,//仓库id
+     *    skuId: 123//商品id
      * 列表
      */
     @RequestMapping("/list")

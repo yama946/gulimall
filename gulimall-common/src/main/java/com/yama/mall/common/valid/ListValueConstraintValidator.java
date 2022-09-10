@@ -1,4 +1,4 @@
-package com.yama.common.valid;
+package com.yama.mall.common.valid;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

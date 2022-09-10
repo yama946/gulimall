@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yama.mall.product.entity.SkuInfoEntity;
 import com.yama.mall.product.service.SkuInfoService;
-import com.yama.common.utils.PageUtils;
-import com.yama.common.utils.R;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.R;
 
 
 
@@ -31,13 +31,19 @@ public class SkuInfoController {
     @Autowired
     private SkuInfoService skuInfoService;
 
+
+    ///product/spuinfo/save
+
+
+
     /**
-     * 列表
+     * /product/skuinfo/list
+     * 多条件分页检索数据
      */
     @RequestMapping("/list")
     //@RequiresPermissions("product:skuinfo:list")
     public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = skuInfoService.queryPage(params);
+        PageUtils page = skuInfoService.queryPageByCondition(params);
 
         return R.ok().put("page", page);
     }
@@ -61,7 +67,6 @@ public class SkuInfoController {
     //@RequiresPermissions("product:skuinfo:save")
     public R save(@RequestBody SkuInfoEntity skuInfo){
 		skuInfoService.save(skuInfo);
-
         return R.ok();
     }
 

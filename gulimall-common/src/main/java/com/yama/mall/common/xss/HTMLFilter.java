@@ -1,4 +1,4 @@
-package com.yama.common.xss;
+package com.yama.mall.common.xss;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

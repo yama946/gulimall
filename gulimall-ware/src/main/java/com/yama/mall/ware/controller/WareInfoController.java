@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yama.mall.ware.entity.WareInfoEntity;
 import com.yama.mall.ware.service.WareInfoService;
-import com.yama.common.utils.PageUtils;
-import com.yama.common.utils.R;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.R;
 
 
 
@@ -32,7 +32,9 @@ public class WareInfoController {
     private WareInfoService wareInfoService;
 
     /**
+     * /ware/wareinfo/list
      * 列表
+     * 模糊查询，并分页列表显示
      */
     @RequestMapping("/list")
     //@RequiresPermissions("ware:wareinfo:list")

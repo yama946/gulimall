@@ -1,7 +1,5 @@
 package com.yama.mall.product.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.yama.mall.product.entity.CategoryBrandRelationEntity;
 import com.yama.mall.product.service.CategoryBrandRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,8 +7,8 @@ import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yama.common.utils.PageUtils;
-import com.yama.common.utils.Query;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.Query;
 
 import com.yama.mall.product.dao.BrandDao;
 import com.yama.mall.product.entity.BrandEntity;

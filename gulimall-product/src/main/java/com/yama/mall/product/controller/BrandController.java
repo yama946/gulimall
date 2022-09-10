@@ -1,15 +1,12 @@
 package com.yama.mall.product.controller;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
-import com.yama.common.valid.AddGroup;
-import com.yama.common.valid.UpdateGroup;
-import com.yama.common.valid.UpdateStatusGroup;
+import com.yama.mall.common.valid.AddGroup;
+import com.yama.mall.common.valid.UpdateStatusGroup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yama.mall.product.entity.BrandEntity;
 import com.yama.mall.product.service.BrandService;
-import com.yama.common.utils.PageUtils;
-import com.yama.common.utils.R;
-
-import javax.validation.Valid;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.R;
 
 
 /**

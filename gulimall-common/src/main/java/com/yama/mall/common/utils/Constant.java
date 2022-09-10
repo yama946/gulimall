@@ -6,7 +6,7 @@
  * 版权所有，侵权必究！
  */
 
-package com.yama.common.utils;
+package com.yama.mall.common.utils;
 
 /**
  * 常量

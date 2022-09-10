@@ -1,7 +1,7 @@
 package com.yama.mall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yama.common.utils.PageUtils;
+import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.product.entity.SpuInfoDescEntity;
 
 import java.util.Map;
@@ -16,5 +16,7 @@ import java.util.Map;
 public interface SpuInfoDescService extends IService<SpuInfoDescEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void saveSpuInfoDesc(SpuInfoDescEntity spuInfoDesc);
 }
 

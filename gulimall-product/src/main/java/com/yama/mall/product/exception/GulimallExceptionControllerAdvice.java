@@ -1,11 +1,10 @@
 package com.yama.mall.product.exception;
 
-import com.yama.common.exception.BizCodeEnume;
-import com.yama.common.utils.R;
+import com.yama.mall.common.exception.BizCodeEnume;
+import com.yama.mall.common.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

@@ -1,9 +1,11 @@
 package com.yama.mall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yama.common.utils.PageUtils;
+import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.product.entity.AttrGroupEntity;
+import com.yama.mall.product.vo.AttrGroupWithAttrsVO;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,5 +21,8 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
 
 
     PageUtils queryPageByCatelogId(Map<String, Object> params, Integer catelogId);
+
+
+    List<AttrGroupWithAttrsVO> getAttrGroupWithattrsByCatelogId(Long catelogId);
 }
 

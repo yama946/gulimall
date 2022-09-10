@@ -1,9 +1,11 @@
 package com.yama.mall.ware.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yama.common.utils.PageUtils;
+import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.ware.entity.PurchaseEntity;
+import com.yama.mall.ware.vo.MergeVO;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +18,11 @@ import java.util.Map;
 public interface PurchaseService extends IService<PurchaseEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    PageUtils queryPageUnreceiveList(Map<String, Object> params);
+
+    void mergePurchase(MergeVO mergeVO);
+
+    void receivedPurchase(List<Long> ids);
 }
 

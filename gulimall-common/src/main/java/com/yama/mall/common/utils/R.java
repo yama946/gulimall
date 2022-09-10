@@ -6,7 +6,7 @@
  * 版权所有，侵权必究！
  */
 
-package com.yama.common.utils;
+package com.yama.mall.common.utils;
 
 import org.apache.http.HttpStatus;
 
@@ -61,4 +61,8 @@ public class R extends HashMap<String, Object> {
 		super.put(key, value);
 		return this;
 	}
+
+	public Integer getCode(){
+        return (Integer)this.get("code");
+    }
 }
