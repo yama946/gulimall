@@ -6,6 +6,7 @@ import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.yama.mall.ware.vo.MergeVO;
+import com.yama.mall.ware.vo.PurchaseDoneVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import com.yama.mall.ware.service.PurchaseService;
 import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.common.utils.R;
 
+import javax.validation.Valid;
 
 
 /**
@@ -30,7 +32,26 @@ public class PurchaseController {
     private PurchaseService purchaseService;
 
 
-    ///ware/purchase/received
+
+    /**
+     *  /ware/purchase/done
+     * 完成采购，或成功，或失败
+     * @param purchaseDoneVO
+     * @return
+     */
+    @PostMapping("/done")
+    public R done(@RequestBody @Valid PurchaseDoneVO purchaseDoneVO){
+        purchaseService.donePurchase(purchaseDoneVO);
+        return R.ok();
+    }
+
+
+    /**
+     * /ware/purchase/received
+     * 领取采购单
+     * @param ids
+     * @return
+     */
     @PostMapping("/received")
     public R received(@RequestBody List<Long> ids){
         //TODO 细节查询属于自己的采购单才能领取，这里没有做

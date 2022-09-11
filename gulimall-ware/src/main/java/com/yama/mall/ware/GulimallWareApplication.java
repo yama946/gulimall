@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @MapperScan(basePackages = {"com.yama.mall.ware.dao","com.yama.mall.common.config"})
 @ComponentScan(basePackages = "com.yama.mall")
 @RefreshScope
-@EnableFeignClients
+@EnableFeignClients(basePackages = "com.yama.mall.ware.feign")
 @EnableTransactionManagement//用来开启事务
 @EnableDiscoveryClient
 @SpringBootApplication

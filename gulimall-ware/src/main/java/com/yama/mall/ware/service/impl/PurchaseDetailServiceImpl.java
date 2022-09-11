@@ -1,6 +1,8 @@
 package com.yama.mall.ware.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -50,6 +52,20 @@ public class PurchaseDetailServiceImpl extends ServiceImpl<PurchaseDetailDao, Pu
         );
 
         return new PageUtils(page);
+    }
+
+    /**
+     * 员工领取采购单辅助方法，
+     * 通过采购单id，获取所有采购项
+     * @param purchaseId
+     * @return
+     */
+    @Override
+    public List<PurchaseDetailEntity> listPurchaseDetailByPurchaseId(Long purchaseId) {
+        QueryWrapper<PurchaseDetailEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("purchase_id",purchaseId);
+        List<PurchaseDetailEntity> purchaseDetailEntities = this.baseMapper.selectList(queryWrapper);
+        return purchaseDetailEntities;
     }
 
 }

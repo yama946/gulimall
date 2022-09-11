@@ -1,9 +1,12 @@
 package com.yama.mall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.yama.mall.product.entity.ProductAttrValueEntity;
+import com.yama.mall.product.service.ProductAttrValueService;
 import com.yama.mall.product.vo.AttrRespVO;
 import com.yama.mall.product.vo.AttrVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,33 @@ import com.yama.mall.common.utils.R;
 public class AttrController {
     @Autowired
     private AttrService attrService;
+
+    @Autowired
+    private ProductAttrValueService productAttrValueService;
+
+
+    /**
+     * /product/attr/update/{spuId}
+     * 回显spu规格后，进行修改操作的请求
+     */
+    @PostMapping("update/{spuId}")
+    public R updateAttrListForSpu(@PathVariable("spuId")Long spuId,
+                                  @RequestBody List<ProductAttrValueEntity> entities){
+        productAttrValueService.updateAttrList(spuId,entities);
+        return R.ok();
+    }
+
+
+    /**
+     * /product/attr/base/listforspu/{spuId}
+     * 获取spu规格,进行前端页面的回显
+     */
+    @GetMapping("base/listforspu/{spuId}")
+    public R baseAttrListForSpu(@PathVariable("spuId")Long spuId){
+        List<ProductAttrValueEntity> entities =  productAttrValueService.baseAttrListForSpu(spuId);
+        return R.ok().put("data", null);
+    }
+
 
     /**
      *获取属性规格参数的详细信息

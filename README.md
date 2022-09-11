@@ -300,3 +300,56 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
 
 需要填充的属性：	private Date updateTime;
 this.strictInsertFill(metaObject, "updateTime"（要填充的属性名）, Date.class(要和填充属性数据类型相同), new Date()); // 起始版本 3.3.0(推荐使用)
+
+
+### 知识点25：Stream流中的filter方法的使用
+```
+将集合中每个元素进行过滤，判断元素是否返回true，返回true则保留进入流水线的下一步。
+filter(item->{
+            if (item.getStatus() == WareConstant.PurchaseStatusEnum.CREATED.getCode()
+                || item.getStatus() == WareConstant.PurchaseStatusEnum.ASSIGNED.getCode()){
+                return true;
+            }
+            return false;
+```
+
+
+### 知识点26：重要！ 重要！ 重要！！！！！！！！！！！！！！！！
+```
+public void addStocks(Long skuId, Long wareId, Integer skuNum) {
+        //判断当前是否存在此库存信息，否则是保存操作
+        WareSkuEntity wareSkuEntitie = wareSkuDao.selectOne(new QueryWrapper<WareSkuEntity>()
+                .eq("sku_id", skuId).eq("ware_id", wareId));
+        if (wareSkuEntitie==null){
+            WareSkuEntity wareSkuEntity = new WareSkuEntity();
+            wareSkuEntitie.setSkuId(skuId);
+            wareSkuEntitie.setWareId(wareId);
+            wareSkuEntitie.setStock(skuNum);
+            wareSkuEntitie.setStockLocked(0);
+            //TODO 远程调用接口设置sku的name,如果微服务不稳定，导致远程调用失败，整个事务无需回滚
+            //自己try...catch进行解决,通过try...catch处理异常后，不会抛出异常，也就不会触发回滚操作
+            try {
+                R skuInfoMap = productFeignService.info(skuId);
+
+                Map<String,Object> info = (Map<String,Object>)skuInfoMap.get("skuInfo");
+
+                if (skuInfoMap.getCode() ==0){
+                    wareSkuEntity.setSkuName((String) info.get("skuName"));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            wareSkuDao.insert(wareSkuEntity);
+        }else {
+            wareSkuDao.addStock(skuId,wareId,skuNum);
+        }
+    }
+```
+#### 重点1：
+ Map<String,Object> info = (Map<String,Object>)skuInfoMap.get("skuInfo");
+ 上述代码：skuInfoMap.get("skuInfo")，保存的是一个SkuInfoEntity实体类，可以直接将其中的键值转换成Map集合
+
+#### 重点2：涉及到分布式事务概念
+自我思考：此时如果远程调用出现问题，当前本地事务方法，异常回滚，但是远程调用操作不一定会回滚，这就涉及到数据库的一致性。
+
+当微服务不稳定，可能导致远程调用失败，但是我们又不想回滚，可以使用try...catch处理异常不抛出，就不会触发异常回滚。
