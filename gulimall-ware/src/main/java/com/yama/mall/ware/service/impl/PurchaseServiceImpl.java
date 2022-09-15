@@ -7,6 +7,7 @@ import com.yama.mall.ware.service.WareSkuService;
 import com.yama.mall.ware.vo.MergeVO;
 import com.yama.mall.ware.vo.PurchaseDoneVO;
 import com.yama.mall.ware.vo.PurchaseItemDoneVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ import javax.validation.constraints.NotNull;
 
 
 @Service("purchaseService")
+@Slf4j
 public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity> implements PurchaseService {
 
     @Autowired
@@ -76,7 +78,8 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity
             purchaseId=purchaseEntity.getId();
         }
         //TODO 确认采购点的状态是0,1才能进行合并
-        List<Long> item = mergeVO.getItem();
+        List<Long> item = mergeVO.getItems();
+        log.debug("item的值：{}",item);
         Long finalPurchaseId = purchaseId;
         List<PurchaseDetailEntity> purchaseDetailCollect = item.stream().map(i -> {
             PurchaseDetailEntity purchaseDetail = new PurchaseDetailEntity();

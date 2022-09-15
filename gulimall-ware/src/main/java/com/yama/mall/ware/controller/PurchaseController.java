@@ -7,6 +7,7 @@ import java.util.Map;
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.yama.mall.ware.vo.MergeVO;
 import com.yama.mall.ware.vo.PurchaseDoneVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("ware/purchase")
+@Slf4j
 public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;
@@ -68,6 +70,7 @@ public class PurchaseController {
      */
     @PostMapping("/merge")
     public R merge(@RequestBody MergeVO mergeVO){
+        log.debug("接受到的合并菜单:{}",mergeVO);
         purchaseService.mergePurchase(mergeVO);
         return R.ok();
     }

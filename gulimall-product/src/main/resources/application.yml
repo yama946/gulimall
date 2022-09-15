@@ -13,6 +13,8 @@ spring:
 # 使用jackson.data-format配置所有时间数据转换json都会转换成配置的格式
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+    #修复前端显示，时区问题，比系统时间小8小时
+    time-zone: Asia/Shanghai
 
 # 配置mybatis-plus
 mybatis-plus:
