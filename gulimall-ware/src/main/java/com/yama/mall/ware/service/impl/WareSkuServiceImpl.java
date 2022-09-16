@@ -2,12 +2,15 @@ package com.yama.mall.ware.service.impl;
 
 import com.yama.mall.common.utils.R;
 import com.yama.mall.ware.feign.ProductFeignService;
+import com.yama.mall.ware.vo.SkuHasStockVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -28,6 +31,23 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     @Autowired
     private ProductFeignService productFeignService;
+
+    /**
+     * 判断sku是否存在库存
+     * @param skuIds
+     * @return
+     */
+    @Override
+    public List<SkuHasStockVO> getSkuHasStock(List<Long> skuIds) {
+        List<SkuHasStockVO> stocks = skuIds.stream().map(skuId -> {
+            SkuHasStockVO stockVO = new SkuHasStockVO();
+            Long stock = this.baseMapper.hasStock(skuId);
+            stockVO.setSkuId(skuId);
+            stockVO.setHasStock(stock==null?false:stock > 0);
+            return stockVO;
+        }).collect(Collectors.toList());
+        return stocks;
+    }
 
     /**
      * 检索商品库存

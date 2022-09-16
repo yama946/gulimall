@@ -35,6 +35,12 @@ spring:
             - Path=/api/ware/**
           filters:
             - RewritePath=/api/?(?<segment>.*), /$\{segment}
+        - id: search-route
+          uri: lb://gulimall-search
+          predicates:
+            - Path=/api/search/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /$\{segment}
         - id: admin-route
           uri: lb://renren-fast
           predicates:

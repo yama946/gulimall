@@ -46,6 +46,20 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Autowired
     private CategoryDao categoryDao;
 
+    /**
+     * 查询可检索的attrIds
+     * @param attrIds
+     * @return
+     */
+    @Override
+    public List<Long> selectSearchAttrs(List<Long> attrIds) {
+        /**
+         * SELECT attr_id from pms_attr where attr_id in(?) AND search_type=1
+         */
+        List<Long> searchAttrIds = this.baseMapper.selectSearchTypeByAttrIds(attrIds);
+        return searchAttrIds;
+    }
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<AttrEntity> page = this.page(

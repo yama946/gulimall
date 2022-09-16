@@ -1,15 +1,13 @@
 package com.yama.mall.ware.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.yama.mall.ware.vo.SkuHasStockVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.yama.mall.ware.entity.WareSkuEntity;
 import com.yama.mall.ware.service.WareSkuService;
@@ -30,6 +28,21 @@ import com.yama.mall.common.utils.R;
 public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
+
+    /**
+     * 判断sku中是否有库存
+     * @param skuIds
+     * @return
+     */
+    @PostMapping("/hasstock")
+    public R<List<SkuHasStockVO>> getSkusHasStock(@RequestBody List<Long> skuIds){
+        List<SkuHasStockVO> skuHasStockVOS = wareSkuService.getSkuHasStock(skuIds);
+        R<List<SkuHasStockVO>> r = R.ok();
+        r.setData(skuHasStockVOS);
+        return r;
+    }
+
+
 
     /**
      * /ware/waresku/list

@@ -16,6 +16,7 @@ spring:
     #修复前端显示，时区问题，比系统时间小8小时
     time-zone: Asia/Shanghai
 
+
 # 配置mybatis-plus
 mybatis-plus:
 #  配置mapper配置文件的位置，其中classpath*表示包括其他依赖项目的classpath，不带*表示仅仅自己的classpath路径

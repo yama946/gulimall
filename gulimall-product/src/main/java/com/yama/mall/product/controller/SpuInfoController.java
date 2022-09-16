@@ -33,7 +33,18 @@ public class SpuInfoController {
     private SpuInfoService spuInfoService;
 
 
-    //
+
+    /**
+     * /product/spuinfo/{spuId}/up
+     * 商品上架
+     * 将sku信息以及其他冗余信息保存到es数据库中
+     * @param spuId
+     * @return
+     */
+    public R upSpu(@PathVariable("spuId") Long spuId){
+        spuInfoService.up(spuId);
+        return R.ok();
+    }
 
 
     /**
