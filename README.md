@@ -353,3 +353,42 @@ public void addStocks(Long skuId, Long wareId, Integer skuNum) {
 自我思考：此时如果远程调用出现问题，当前本地事务方法，异常回滚，但是远程调用操作不一定会回滚，这就涉及到数据库的一致性。
 
 当微服务不稳定，可能导致远程调用失败，但是我们又不想回滚，可以使用try...catch处理异常不抛出，就不会触发异常回滚。
+
+### 缓存中存放的数据，应该是JSON字符串，而不是Java序列化的字符串
+```
+    /**
+     * 业务优化之redis缓存
+     * 获取所有分类数据json
+     * @return
+     */
+    @Override
+    public Map<String, List<Catelog2VO>> getCatalogJson() {
+        //给缓存中存放Json字符串，拿到的是Json字符串，还要逆转为我们能用的对象类型：【序列化与反序列化】
+        //这种序列化是我们自己进行的，不使用java的序列化保存。
+
+        //1.加入缓存业务逻辑，缓存中存放的是Json字符串
+        //Json字符串跨语言，跨平台兼容
+        ValueOperations<String, String> stringOps = redisTemplate.opsForValue();
+        String catalogJson = stringOps.get("catalogJson");
+        if (StringUtils.isEmpty(catalogJson)){
+            //2.缓存中没有，查询数据库
+            Map<String, List<Catelog2VO>> catalogJsonFromDB = getCatalogJsonFromDB();
+            //3.将数据库中查询到的数据保存到redis缓存中,将对象转换为JSON存放到缓存中
+            String catalogJsonData = JSON.toJSONString(catalogJsonFromDB);
+            stringOps.set("catalogJson",catalogJsonData);
+            return catalogJsonFromDB;
+        }else {
+            //4.缓存中有数据值及返回
+            Map<String, List<Catelog2VO>> resultMap = JSON.parseObject(catalogJson,new TypeReference<Map<String, List<Catelog2VO>>>(){});
+            return resultMap;
+        }
+```
+#### 原因：
+* JSON是跨语言，跨平台的
+* 如果我们使用其他语言，比如php，编写一个物流系统，同时因为需要从缓存中获取数据，如果缓存中保存的是java序列化字符串，
+那么php就无法转换，如果是json，就可以很好的转换为对应语言的对象。
+
+#### 注意点：
+* 保存到redis缓存中，以Json字符串的形式，获取使用前需要转换为相应的对象。
+
+
