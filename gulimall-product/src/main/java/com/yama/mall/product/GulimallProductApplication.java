@@ -92,6 +92,15 @@ import org.springframework.context.annotation.ComponentScan;
  * 使用SpringMVC提供的异常同一处理机制，使用注解异常配置：@ControllerAdvice
  */
 
+/**
+ * 5、模板引擎
+ * 1）、thymeleaf-starter导入，并配置缓存关闭，实时看到修改结果，部署时开启
+ * 2）、静态资源都放在static文件夹下就可以按照路径直接访问
+ * 3）、页面放在templates下，直接访问
+ *      springboot，访问项目的时候，默认找index
+ *      可以在源码WebMvcAutoConfiguration自动配置类中找到来源
+ */
+
 @EnableFeignClients(basePackages = "com.yama.mall.product.feign")
 @RefreshScope
 @EnableDiscoveryClient

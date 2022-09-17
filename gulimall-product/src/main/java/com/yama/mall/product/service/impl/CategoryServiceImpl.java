@@ -9,6 +9,7 @@ import com.yama.mall.product.dao.CategoryDao;
 import com.yama.mall.product.entity.CategoryEntity;
 import com.yama.mall.product.service.CategoryBrandRelationService;
 import com.yama.mall.product.service.CategoryService;
+import com.yama.mall.product.vo.Catelog2VO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,61 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
+
+    /**
+     * 获取所有分类数据json
+     * @return
+     */
+    @Override
+    public Map<String, List<Catelog2VO>> getCatalogJson() {
+        //1.查出所有1级分类
+        List<CategoryEntity> level1Category = getLevel1Category();
+        //2.封装数据
+        Map<String, List<Catelog2VO>> parent_cid = level1Category.stream()
+                .collect(Collectors.toMap(k -> k.getCatId().toString(), v -> {
+            //根据1级分类，查询到2级分类
+            List<CategoryEntity> entities = baseMapper
+                    .selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", v.getCatId()));
+
+            List<Catelog2VO> catelog2VOs = null;
+
+            if (entities != null) {
+                catelog2VOs = entities.stream().map(l2 -> {
+                    Catelog2VO catelog2VO = new Catelog2VO(
+                            v.getCatId().toString(), null, l2.getCatId().toString(), l2.getName());
+                    //找当前2级分类的3级分类进行封装
+                    List<CategoryEntity> level3Catelog = baseMapper
+                            .selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", l2.getCatId()));
+
+                    if (level3Catelog!=null){
+                        List<Catelog2VO.Catelog3VO> catelog3Data = level3Catelog.stream().map(l3 -> {
+                            //封装成指定格式
+                            Catelog2VO.Catelog3VO catelog3VO = new Catelog2VO.Catelog3VO(
+                                    l2.getCatId().toString(), l3.getCatId().toString(), l3.getName());
+                            return catelog3VO;
+                        }).collect(Collectors.toList());
+                        catelog2VO.setCatalog3List(catelog3Data);
+                    }
+                    return catelog2VO;
+                }).collect(Collectors.toList());
+            }
+            return catelog2VOs;
+        }));
+
+        return parent_cid;
+    }
+
+    /**
+     * 获取所有1级分类数据
+     * @return
+     */
+    @Override
+    public List<CategoryEntity> getLevel1Category() {
+        QueryWrapper<CategoryEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("parent_cid",0).or().eq("cat_level",1);
+        List<CategoryEntity> entities = this.baseMapper.selectList(queryWrapper);
+        return entities;
+    }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {

@@ -15,6 +15,16 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     #修复前端显示，时区问题，比系统时间小8小时
     time-zone: Asia/Shanghai
+  #配置thymeleaf相关属性
+  thymeleaf:
+    #配置映射路径前缀
+    prefix: classpath:/templates/
+    #配置映射路径后缀
+    suffix: .html
+    #开发时禁用缓存
+    cache: false
+    #配置模板格式，可以不配置，直接创建后缀文件，添加名称空间
+    mode: HTML
 
 
 # 配置mybatis-plus
