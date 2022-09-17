@@ -133,6 +133,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         Boolean lock = redisTemplate.opsForValue().setIfAbsent("lock", uuid,100, TimeUnit.SECONDS);
         /*Boolean lock = redisTemplate.opsForValue().setIfAbsent("lock", "110",100, TimeUnit.SECONDS);*/
         if (lock){
+            log.info("分布式锁争用成功");
             //加锁成功。。。执行业务
             //2.设置过期时间,如果在这里加锁，在添加过期事件前异常导致设置失败，也会导致死锁，
             //要解决问题：就要让过期时间的设置与值设置是一个原子的操作，同时执行成功或失败。
@@ -156,11 +157,10 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             //执行删除的Lua脚本
             String scriptLua = "if redis.call('get', KEYS[1]) == ARGV[1] then return  redis.call('del', KEYS[1]) else return 0 end";
 
-            //执行脚本删除锁,,Integer.class表示脚本执行的返回结果类型
-            Integer scriptResult = redisTemplate.execute(
-                    new DefaultRedisScript<>(scriptLua, Integer.class), Arrays.asList("lock"), uuid);
-
-
+            //执行脚本删除锁,,Long.class表示脚本执行的返回结果类型
+            Long scriptResult = redisTemplate.execute(
+                    new DefaultRedisScript<>(scriptLua, Long.class), Arrays.asList("lock"), uuid);
+            log.debug("脚本执行的结果为1：成功，0：失败，执行结果为：{}",scriptResult);
             return dataFromDB;
         }else {
             //加锁失败......等待一段时间后重试，类似synchronized()自旋的方式
