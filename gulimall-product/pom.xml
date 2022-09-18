@@ -25,6 +25,13 @@
 
 
     <dependencies>
+
+        <!--引入spingcache简化缓存的开发，同时还需要引入redis作为缓存管理器-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
         <!--以后使用redisson作为分布式锁，分布式对象等功能的框架-->
         <!--这里我们不是用redisson的启动器，是为了更好的了解redission，启动器的配置更为简单-->
         <dependency>

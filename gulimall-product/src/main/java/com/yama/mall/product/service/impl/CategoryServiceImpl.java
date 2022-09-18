@@ -17,6 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -99,7 +103,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         String catalogJson = redisTemplate.opsForValue().get("catalogJson");
         if (StringUtils.isEmpty(catalogJson)){
             //2.缓存中没有，查询数据库
-            Map<String, List<Catelog2VO>> catalogJsonFromDB = getCatalogJsonFromDBWithLocalLock();
+            Map<String, List<Catelog2VO>> catalogJsonFromDB = getCatalogJsonFromDBWithRedissonLock();
             /*
             这里的代码要在查询数据库后，未释放锁前加入缓存，否则由于上下文线程切换会导致其他线程再次从数据库重查询
             //3.将数据库中查询到的数据保存到redis缓存中,将对象转换为JSON存放到缓存中
@@ -467,7 +471,23 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     /**
      * 获取所有1级分类数据
      * @return
+     * 1、每一个需要缓存的数据我们都来指定要放到那个名字的缓存。【缓存的值相当于缓存的分区（按照业务类型划分）】
+     * 2、@Cacheable({"catalog","brand"}):可以同时放到多个分区中
+      *   作用在方法上：
+      *          代表当前方法的结果需要缓存，如果缓存中有，方法不用调用；
+     *           如果缓存中没有，会调用方法，最后将方法的结果放入缓存中保存。
+     * 3、默认行为：
+     *      1).如果缓存中有，方法不用调用
+     *      2).存放到redis中的key默认自动生成的,缓存的名字为：category::SimpleKey []
+     *      3).缓存的value的值，默认使用jdk序列化机制，将序列化后的数据存到redis中
+     *      4).默认ttl(过期时间)时间 -1：永不过期
+     * 4.自定义行为：
+     *      1）指定生成缓存的key名：注解中的key属性指定，接收一个Spel。key值会替换默认值的SimpleKey
+     *         spel参考：https://docs.spring.io/spring-framework/docs/5.2.22.RELEASE/spring-framework-reference/integration.html#cache-spel-context
+     *      2）指定缓存的数据的存活时间:配置文档中修改存活时间:spring.cache.redis.time-to-live
+     *      3）将数据保存为json格式
      */
+    @Cacheable(value = {"category","brand"},key = "#root.methodName",sync = true)
     @Override
     public List<CategoryEntity> getLevel1Category() {
         QueryWrapper<CategoryEntity> queryWrapper = new QueryWrapper<>();
@@ -553,8 +573,31 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 更新关联表数据
+     * @CacheEvict:缓存数据一致性保证：失效模式
+     * 1.需要指定删除那个注解，标识缓存分区名，key属性名，定位缓存的键
+     * 2.此时的key属性不能复制，需要写名添加缓存时动态获取到的值，固定写入
+     * 注意：key属性接受spel表达式，字符串需要添加单引号表示常量才生效:key = "'getLevel1Category'"
+     *
+     * 场景1：
+     *      当更新数据时，需要删除多个缓存键，两种方法
+     *    1.使用缓存的组合多种操作：同时删除两个缓存键
+     *        @Caching(evict = {
+     *             @CacheEvict(value = "category",key = "'getLevel1Category'"),
+     *             @CacheEvict(value = "category",key = "'getLevel1Category'")
+     *     })
+     *    2.删除整个缓存分区，缓存名就是缓存分区名。需要合理化命名分区
+     *      allEntries = true,此属性表示删除整个分区。
+     *      @CacheEvict(value = "category",allEntries = true)
+     *
+     *     @CachePut:表示将方法的返回值，重新放到缓存中，但是方法没有返回值无法使用
      * @param category
      */
+//    @CacheEvict(value = "category",key = "'getLevel1Category'")
+    /*@Caching(evict = {
+            @CacheEvict(value = "category",key = "'getLevel1Category'"),
+            @CacheEvict(value = "category",key = "'getLevel1Category'")
+    })*/
+    @CacheEvict(value = "category",allEntries = true)
     @Transactional
     @Override
     public void updateCascade(CategoryEntity category) {
