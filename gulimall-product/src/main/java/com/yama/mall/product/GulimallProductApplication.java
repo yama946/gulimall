@@ -101,6 +101,17 @@ import org.springframework.context.annotation.ComponentScan;
  *      可以在源码WebMvcAutoConfiguration自动配置类中找到来源
  */
 
+/**
+ * 6、整合redisson作为分布式锁等功能的框架
+ *      1).引入依赖
+ *         <dependency>
+ *             <groupId>org.redisson</groupId>
+ *             <artifactId>redisson</artifactId>
+ *             <version>3.12.0</version>
+ *         </dependency>
+ *      2).配置redisson
+ */
+
 @EnableFeignClients(basePackages = "com.yama.mall.product.feign")
 @RefreshScope
 @EnableDiscoveryClient

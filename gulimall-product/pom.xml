@@ -25,6 +25,14 @@
 
 
     <dependencies>
+        <!--以后使用redisson作为分布式锁，分布式对象等功能的框架-->
+        <!--这里我们不是用redisson的启动器，是为了更好的了解redission，启动器的配置更为简单-->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+
         <!--模板引擎：thymeleaf-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

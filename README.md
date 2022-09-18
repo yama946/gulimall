@@ -228,7 +228,7 @@ t.getMemberPrice().compareTo(new BigDecimal("0"))==1
 compareTo返回3个值：-1(小于)，0(等于)，1(大于)
 new BigDecimal时，推荐使用字符串创建，据说能避免数据精度的缺失
 
-### 知识点19：无论任何状况，都可将请求传递过来的键值对传递给Map集合对象
+### 知识点19：无论任何状况，都可将请求传递过来的键值对传递给Map集合对象，通过feign远程调用获取的对象默认是map
 
 
 ### 知识点20：mybatis-plus条件构建时，使用and()与不使用生成的sql区别

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +26,7 @@ import com.yama.mall.common.utils.R;
  * @email yanmu123@gmail.com
  * @date 2022-08-30 17:50:51
  */
+@Slf4j
 @RestController
 @RequestMapping("product/skuinfo")
 public class SkuInfoController {
@@ -56,7 +58,9 @@ public class SkuInfoController {
     //@RequiresPermissions("product:skuinfo:info")
     public R info(@PathVariable("skuId") Long skuId){
 		SkuInfoEntity skuInfo = skuInfoService.getById(skuId);
-        return R.ok().put("skuInfo", skuInfo);
+        R info = R.ok().put("skuInfo", skuInfo);
+        log.debug("数据传输前的格式:{}",info);
+        return info;
     }
 
     /**

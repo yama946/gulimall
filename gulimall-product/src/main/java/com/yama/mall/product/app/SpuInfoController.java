@@ -5,6 +5,7 @@ import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.yama.mall.product.vo.SpuSaveVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,7 @@ import com.yama.mall.common.utils.R;
  * @email yanmu123@gmail.com
  * @date 2022-08-30 17:50:51
  */
+@Slf4j
 @RestController
 @RequestMapping("product/spuinfo")
 public class SpuInfoController {
@@ -67,8 +69,8 @@ public class SpuInfoController {
     //@RequiresPermissions("product:spuinfo:info")
     public R info(@PathVariable("id") Long id){
 		SpuInfoEntity spuInfo = spuInfoService.getById(id);
-
-        return R.ok().put("spuInfo", spuInfo);
+        R info = R.ok().put("spuInfo", spuInfo);
+        return info;
     }
 
     /**

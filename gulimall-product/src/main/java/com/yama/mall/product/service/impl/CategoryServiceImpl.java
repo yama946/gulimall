@@ -14,6 +14,8 @@ import com.yama.mall.product.service.CategoryBrandRelationService;
 import com.yama.mall.product.service.CategoryService;
 import com.yama.mall.product.vo.Catelog2VO;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -36,14 +38,16 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      */
     private Map<String,Object> cache = new HashMap<>();
 
-
-
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
 
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+
+    @Autowired
+    private RedissonClient redissonClient;
 
 
     /**
@@ -108,6 +112,33 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             return resultMap;
         }
     }
+
+
+    /**
+     * 基于redisson作为分布式锁功能框架
+     * @return
+     * （业务逻辑是先查询缓存，缓存没有再查询数据库，数据库更新了怎么办）
+     * 缓存里面的数据如何与数据库保持一致，（我想数据库更新是一并更新缓存）
+     * 1）双写模式：也即是缓存和数据库数据同时更新
+     * 2）失效模式：数据库修改后将缓存数据删掉，等待下次查询缓存主动更新。
+     */
+    public Map<String, List<Catelog2VO>> getCatalogJsonFromDBWithRedissonLock() {
+        //1.获取锁，锁的名字相同表示同一个锁，锁的粒度，越细性能越好
+        //一定要避免多个业务获取同一个锁添加，这样锁的粒度就会扩大。
+        //锁的粒度，具体缓存的那个数据，11号商品：product-11-lock，12号商品：product-12-lock，避免12号商品高并发影响，11商品业务
+        RLock mylcok = redissonClient.getLock("catalogJson-lock");
+        //2.加锁
+        mylcok.lock(30,TimeUnit.SECONDS);
+        try{
+            //3.加锁成功，执行业务
+            Map<String, List<Catelog2VO>> dataFromDB = getDataFromDB();
+            return dataFromDB;
+        }finally {
+            //4.释放锁
+            mylcok.unlock();
+        }
+    }
+
 
     /**
      * 基于redis中set命令实现分布式锁
