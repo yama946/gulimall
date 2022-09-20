@@ -104,6 +104,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         if (StringUtils.isEmpty(catalogJson)){
             //2.缓存中没有，查询数据库
             Map<String, List<Catelog2VO>> catalogJsonFromDB = getCatalogJsonFromDBWithRedissonLock();
+//            log.debug("数据库查询结果为:{}",catalogJsonFromDB);
             /*
             这里的代码要在查询数据库后，未释放锁前加入缓存，否则由于上下文线程切换会导致其他线程再次从数据库重查询
             //3.将数据库中查询到的数据保存到redis缓存中,将对象转换为JSON存放到缓存中
@@ -133,13 +134,16 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         RLock mylcok = redissonClient.getLock("catalogJson-lock");
         //2.加锁
         mylcok.lock(30,TimeUnit.SECONDS);
+        log.debug("加锁成功.....{}",Thread.currentThread().getId());
         try{
             //3.加锁成功，执行业务
             Map<String, List<Catelog2VO>> dataFromDB = getDataFromDB();
+            log.debug("加锁后业务执行结束");
             return dataFromDB;
         }finally {
             //4.释放锁
             mylcok.unlock();
+            log.debug("释放锁.....");
         }
     }
 
@@ -219,7 +223,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      */
     private Map<String, List<Catelog2VO>> getDataFromDB() {
         String catalogJson = redisTemplate.opsForValue().get("catalogJson");
-        if (StringUtils.isEmpty(catalogJson)) {
+        if (!StringUtils.isEmpty(catalogJson)) {
             Map<String, List<Catelog2VO>> resultMap = JSON.parseObject(catalogJson, new TypeReference<Map<String, List<Catelog2VO>>>() {
             });
             return resultMap;
@@ -487,7 +491,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      *      2）指定缓存的数据的存活时间:配置文档中修改存活时间:spring.cache.redis.time-to-live
      *      3）将数据保存为json格式
      */
-    @Cacheable(value = {"category","brand"},key = "#root.methodName",sync = true)
+    @Cacheable(value = {"category"},key = "#root.methodName")
     @Override
     public List<CategoryEntity> getLevel1Category() {
         QueryWrapper<CategoryEntity> queryWrapper = new QueryWrapper<>();

@@ -15,6 +15,12 @@ import org.springframework.context.annotation.Configuration;
  *
  * elasticsearch整合springboot的步骤：（整合后使用操作es）
  * 1、导入依赖
+ *         <!--导入es的操作依赖,注意：此以来版本要与elasticsearch版本对应-->
+ *         <dependency>
+ *             <groupId>org.elasticsearch.client</groupId>
+ *             <artifactId>elasticsearch-rest-high-level-client</artifactId>
+ *             <version>7.4.2</version>
+ *         </dependency>
  * 2、编写配置（参考官方文档initialization模块）,也就是进行初始化操作
  *      也就是给容器中注入一个RestHighLevelClient对象用来操作es
  * 3、操作es

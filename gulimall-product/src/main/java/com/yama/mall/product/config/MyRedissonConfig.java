@@ -21,6 +21,9 @@ public class MyRedissonConfig {
     @Value("${spring.redis.port}")
     private String port;
 
+    @Value("${spring.redis.password}")
+    private String password;
+
 
     /**
      * 所有对Redisson的操作都是通过RedissonClient对象
@@ -29,10 +32,20 @@ public class MyRedissonConfig {
      */
     @Bean(destroyMethod="shutdown")
     public RedissonClient redisson() throws IOException {
+        /**
+         * idleConnectionTimeout: 10000
+         *   connectTimeout: 10000
+         *   timeout: 3000
+         */
         //1.创建出配置
         Config config = new Config();
         //单节点模式：可以用"rediss://"来表示启用SSL连接----redis://这个字符串要求添加，至少单节点要求
         config.useSingleServer().setAddress("redis://"+host+":"+port);
+        config.useSingleServer().setPassword(password);
+        config.useSingleServer().setIdleConnectionTimeout(10000);
+        config.useSingleServer().setConnectTimeout(10000);
+        config.useSingleServer().setTimeout(3000);
+
         //集群模式
         /*config.useClusterServers()
                 .addNodeAddress("127.0.0.1:7004", "127.0.0.1:7001");*/

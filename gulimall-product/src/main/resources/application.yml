@@ -22,7 +22,7 @@ spring:
     #配置映射路径后缀
     suffix: .html
     #开发时禁用缓存
-    cache: false
+    cache: true
     #配置模板格式，可以不配置，直接创建后缀文件，添加名称空间
     mode: HTML
 

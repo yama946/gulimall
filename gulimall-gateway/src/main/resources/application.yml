@@ -47,6 +47,17 @@ spring:
             - Path=/api/**
           filters:
             - RewritePath=/api/?(?<segment>.*), /renren-fast/$\{segment}
+#        根据域名转发服务，配置过nginx后，网关接收到转的请求再次转给指定服务
+#        gulimall.com是网站的首页域名
+        - id: gulimall-product_route
+          uri: lb://gulimall-product
+          predicates:
+            - Host=gulimall.com
+#        search.gulimall.com域名是为网站的搜索页的指定域名
+        - id: gulimall-search
+          uri: lb://gulimall-search
+          predicates:
+            - Host=search.gulimall.com
         
 
   
