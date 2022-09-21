@@ -6,6 +6,7 @@ import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.yama.mall.ware.vo.SkuHasStockVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ import com.yama.mall.common.utils.R;
  * @date 2022-08-30 18:17:03
  */
 @RestController
+@Slf4j
 @RequestMapping("ware/waresku")
 public class WareSkuController {
     @Autowired
@@ -35,11 +37,10 @@ public class WareSkuController {
      * @return
      */
     @PostMapping("/hasstock")
-    public R<List<SkuHasStockVO>> getSkusHasStock(@RequestBody List<Long> skuIds){
+    public List<SkuHasStockVO> getSkusHasStock(@RequestBody List<Long> skuIds){
         List<SkuHasStockVO> skuHasStockVOS = wareSkuService.getSkuHasStock(skuIds);
-        R<List<SkuHasStockVO>> r = R.ok();
-        r.setData(skuHasStockVOS);
-        return r;
+        log.debug("是否有库存:{}",skuHasStockVOS);
+        return skuHasStockVOS;
     }
 
 

@@ -21,7 +21,7 @@
         <foreach collection="attrIds" item="attrId" open="(" close=")" separator=",">
             #{attrId}
         </foreach>
-        and select_type=1
+        and search_type=1
     </select>
 
 

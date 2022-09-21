@@ -8,6 +8,7 @@
 
 package com.yama.mall.common.utils;
 
+import lombok.ToString;
 import org.apache.http.HttpStatus;
 
 import java.util.HashMap;

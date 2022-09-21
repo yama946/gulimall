@@ -18,6 +18,7 @@ import com.yama.mall.product.feign.SearchFeignService;
 import com.yama.mall.product.feign.WareFeignService;
 import com.yama.mall.product.service.*;
 import com.yama.mall.product.vo.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,10 +28,9 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service("spuInfoService")
 public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> implements SpuInfoService {
     @Autowired
@@ -72,6 +72,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     private WareFeignService wareFeignService;
 
     //es远程调用接口
+    @Autowired
     private SearchFeignService searchFeignService;
 
 
@@ -116,9 +117,10 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         //异常处理保证异常后续操作可以进行
         Map<Long, Boolean> stockMap = null;
         try {
-            R<List<SkuHasStockVO>> skusHasStock = wareFeignService.getSkusHasStock(skuIds);
+            List<SkuHasStockVO> skusHasStock = wareFeignService.getSkusHasStock(skuIds);
+            log.debug("R返回类型未改变:{}",skusHasStock.toString());
 
-            stockMap = skusHasStock.getData().stream()
+            stockMap = skusHasStock.stream()
                     .collect(Collectors.toMap(SkuHasStockVO::getSkuId, SkuHasStockVO::getHasStock));
         } catch (Exception e) {
             log.error("库存服务调用异常:{}",e);

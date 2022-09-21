@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,8 +21,8 @@ import java.util.Map;
  * 对象转换成Map测试
  */
 @Slf4j
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = GulimallWareApplication.class)
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(classes = GulimallWareApplication.class)
 public class ObjectTransferToMapTest {
     @Autowired
     ProductFeignService productFeignService;
@@ -55,6 +56,24 @@ public class ObjectTransferToMapTest {
         String skuName = (String) info.get("skuName");
         log.debug("远程获取的skuName为：{}",skuName);
 
+    }
+
+    @Test
+    public void printObject(){
+        Person per1 = new Person("jack1", 23);
+        Person per2 = new Person("jack2", 23);
+        Person per3 = new Person("jack3", 23);
+        log.debug("打印对象：{}",per1);
+        HashMap<String, Person> map = new HashMap<>();
+        map.put("a",per1);
+        map.put("b",per2);
+        map.put("c",per3);
+        log.debug("map对象：{}",map);
+        ArrayList<Person> people = new ArrayList<>();
+        people.add(per1);
+        people.add(per2);
+        people.add(per3);
+        log.debug("list对象：{}",people);
     }
 }
 
