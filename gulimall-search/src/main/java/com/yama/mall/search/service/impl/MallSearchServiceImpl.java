@@ -6,7 +6,9 @@ import com.yama.mall.common.to.SkuEsModel;
 import com.yama.mall.common.utils.R;
 import com.yama.mall.search.config.GulimallElasticSearchConfig;
 import com.yama.mall.search.constant.EsConstant;
+import com.yama.mall.search.feign.ProductFeignService;
 import com.yama.mall.search.service.MallSearchService;
+import com.yama.mall.search.vo.AttrResponseVO;
 import com.yama.mall.search.vo.SearchParamVO;
 import com.yama.mall.search.vo.SearchResultVO;
 import lombok.extern.slf4j.Slf4j;
@@ -42,13 +44,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-/**
- * @Description:
- * @Created: with IntelliJ IDEA.
- * @author: 夏沫止水
- * @createTime: 2020-06-13 14:19
- **/
 
 @Slf4j
 @Service
@@ -211,7 +206,7 @@ public class MallSearchServiceImpl implements MallSearchService {
                 navVo.setNavValue(s[1]);
                 R r = productFeignService.attrInfo(Long.parseLong(s[0]));
                 if (r.getCode() == 0) {
-                    AttrResponseVo data = r.getData("attr", new TypeReference<AttrResponseVo>() {
+                    AttrResponseVO data = r.getData("attr", new TypeReference<AttrResponseVO>() {
                     });
                     navVo.setNavName(data.getAttrName());
                 } else {

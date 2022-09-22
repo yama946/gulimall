@@ -5,6 +5,6 @@ package com.yama.mall.search.constant;
  */
 public class EsConstant {
     //sku在es中的索引
-    public final static String PRODUCT_INDEX = "product";
-    public static final int PRODUCT_PAGESIZE = 0;
+    public final static String PRODUCT_INDEX = "gulimall_product";
+    public static final int PRODUCT_PAGESIZE = 16;
 }

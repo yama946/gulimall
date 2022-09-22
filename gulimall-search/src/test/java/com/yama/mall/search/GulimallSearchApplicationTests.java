@@ -2,6 +2,7 @@ package com.yama.mall.search;
 
 import com.alibaba.fastjson.JSON;
 import com.yama.mall.search.config.GulimallElasticSearchConfig;
+import jdk.nashorn.internal.scripts.JS;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,14 @@ import org.elasticsearch.action.support.replication.ReplicationResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.metrics.AvgAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -47,7 +55,7 @@ public class GulimallSearchApplicationTests {
          *         searchSourceBuilder.query(QueryBuilders.matchAllQuery());
          *         searchRequest.source(searchSourceBuilder);
          */
-        //1.创建SearchRequest 对象
+        //1.创建SearchRequest 对象,封装检索添加
         SearchRequest searchRequest = new SearchRequest();
         //指定检索的索引
         searchRequest.indices("bank");
@@ -59,23 +67,52 @@ public class GulimallSearchApplicationTests {
         //按照年龄的值分布进行聚合
         AggregationBuilder aggregationBuilder = AggregationBuilders.
                 terms("ageAgg").field("age").size(10);
+        //聚合操作计算平均工资
+        AvgAggregationBuilder subAvgBalance = AggregationBuilders.avg("avgBalance").field("balance");
+        aggregationBuilder.subAggregation(subAvgBalance);
         searchSourceBuilder.aggregation(aggregationBuilder);
-
-
-
-        searchRequest.source(searchSourceBuilder);
+        //使用searchSourceBuilder构建查询请求条件
         log.info("封装好的检索条件:{}",searchSourceBuilder);
-
-        //2.指定检索请求
+        searchRequest.source(searchSourceBuilder);
+        //2.执行检索请求
         /**
          * SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
          */
-        SearchResponse search = client.search(searchRequest, GulimallElasticSearchConfig.COMMON_OPTIONS);
-        log.info("检索请求结果：{}",search);
+        SearchResponse searchResponse = client.search(searchRequest, GulimallElasticSearchConfig.COMMON_OPTIONS);
+        log.info("检索请求结果：{}",searchResponse.toString());
+        //3.分析检索结果,将结果封装成我们需要的javabean
 
-        //3.分析检索结果
-
-
+        //3.1获取查询命中的所有记录
+        SearchHits hits = searchResponse.getHits();
+        SearchHit[] searchHits = hits.getHits();
+        /**
+         * hit的基本结构
+         *         "_index" : "bank",
+         *         "_type" : "account",
+         *         "_id" : "472",
+         *         "_score" : 5.4032025,
+         *         "_source" : {
+         */
+        for (SearchHit searchHit : searchHits) {
+            //通常使用该方法，获取source数据
+            String sourceAsString = searchHit.getSourceAsString();
+            SearchResponseBean searchResponseBean = JSON.parseObject(sourceAsString, SearchResponseBean.class);
+            log.debug("返回的结果javaBean：{}",searchResponseBean);
+        }
+        //3.2获取所有的聚合数据
+        Aggregations aggregations = searchResponse.getAggregations();
+//        for (Aggregation aggregation:aggregations.asList()) {
+//            Map<String, Object> metaData = aggregation.getMetaData();
+//
+//        }
+        /**
+         * 每种聚合类型的分析结果对应一种，分析结果类型
+         */
+        Terms term = aggregations.get("ageAgg");
+        for (Terms.Bucket b:term.getBuckets()) {
+            String keyAsString = b.getKeyAsString();
+            log.debug("当前bucket的key值：{}",keyAsString);
+        }
     }
 
 
@@ -140,6 +177,33 @@ public class GulimallSearchApplicationTests {
         private Integer age;
 
         private String agender;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class SearchResponseBean{
+        private int account_number;
+
+        private int balance;
+
+        private String firstname;
+
+        private String lastname;
+
+        private int age;
+
+        private String gender;
+
+        private String address;
+
+        private String employer;
+
+        private String email;
+
+        private String city;
+
+        private String state;
     }
 
     @Test
