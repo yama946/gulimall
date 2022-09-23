@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @FeignClient("gulimall-product")
 public interface ProductFeignService {
-    @PostMapping("product/attr/{attrId}")
-    R attrInfo(@PathVariable("attrId") long attrId);
+    @PostMapping("product/attr/info/{attrId}")
+    R attrInfo(@PathVariable("attrId") Long attrId);
 }

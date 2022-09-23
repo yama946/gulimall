@@ -52,3 +52,11 @@ logging:
 ribbon:
   ReadTimeout: 100000
   ConnectTimeout: 100000
+  
+  
+#线程池属性配置参数
+gulimall:
+  thread:
+    coreSize: 2
+    maxSize: 4
+    keepAliveTime: 2

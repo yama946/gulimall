@@ -1,16 +1,17 @@
 package com.yama.mall.product.service.impl;
 
-import org.springframework.stereotype.Service;
-import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.common.utils.Query;
-
 import com.yama.mall.product.dao.SkuImagesDao;
 import com.yama.mall.product.entity.SkuImagesEntity;
 import com.yama.mall.product.service.SkuImagesService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 
 @Service("skuImagesService")
@@ -25,5 +26,17 @@ public class SkuImagesServiceImpl extends ServiceImpl<SkuImagesDao, SkuImagesEnt
 
         return new PageUtils(page);
     }
+
+    /**
+     * 通过skuId获取图片列表
+     * @param skuId
+     * @return
+     */
+    @Override
+    public List<SkuImagesEntity> getImagsBySkuId(Long skuId) {
+        List<SkuImagesEntity> skuImagesEntityList = this.list(new QueryWrapper<SkuImagesEntity>().eq("sku_id", skuId));
+        return skuImagesEntityList;
+    }
+
 
 }

@@ -20,7 +20,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SpuSaveVo {
+public class SpuSaveVO {
 
     private String spuName;
     private String spuDescription;

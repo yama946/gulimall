@@ -1,8 +1,11 @@
 package com.yama.mall.product.service.impl;
 
 import com.yama.mall.product.entity.AttrEntity;
+import com.yama.mall.product.entity.SpuInfoEntity;
 import com.yama.mall.product.service.AttrService;
+import com.yama.mall.product.service.SpuInfoService;
 import com.yama.mall.product.vo.AttrGroupWithAttrsVO;
+import com.yama.mall.product.vo.SpuItemAttrGroupVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,9 @@ import org.springframework.util.StringUtils;
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
+
+    @Autowired
+    private SpuInfoService spuInfoService;
 
     @Autowired
     private AttrService attrService;
@@ -81,6 +87,20 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
             return attrsVO;
         }).collect(Collectors.toList());
         return collect;
+    }
+
+    /**
+     * 通过spuId获取属性组信息，以及属性组对应的属性信息
+     * @param spuId
+     * @param catalogId
+     * @return
+     */
+    @Override
+    public List<SpuItemAttrGroupVO> getAttrGroupWithattrsBySpuId(Long spuId, Long catalogId) {
+        //使用联表查询数据
+        List<SpuItemAttrGroupVO> spuItemAttrGroupVOS =
+                this.getBaseMapper().getAttrGroupWithattrsBySpuId(spuId,catalogId);
+        return spuItemAttrGroupVOS;
     }
 
 }

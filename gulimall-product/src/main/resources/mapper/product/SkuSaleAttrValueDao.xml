@@ -12,6 +12,24 @@
         <result property="attrValue" column="attr_value"/>
         <result property="attrSort" column="attr_sort"/>
     </resultMap>
+    <!--
+    private Long attrId;
+
+    private String attrName;
+
+    private String attrValues;
+    -->
+    <select id="getSaleAttrValueBySpuId" resultType="com.yama.mall.product.vo.SkuItemSaleAttrVO">
+        select info.sku_id skuId,
+        val.attr_id attrId,
+        val.attr_name attrName,
+        GROUP_CONCAT(DISTINCT val.attr_value) attrValues
+        from pms_sku_info info
+        left join pms_sku_sale_attr_value val
+        on info.sku_id=val.sku_id
+        where info.spu_id=#{spuId}
+        group by val.attr_id,val.attr_name
+    </select>
 
 
 </mapper>

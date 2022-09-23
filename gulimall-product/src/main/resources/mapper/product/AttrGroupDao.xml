@@ -12,6 +12,16 @@
         <result property="icon" column="icon"/>
         <result property="catelogId" column="catelog_id"/>
     </resultMap>
+    <select id="getAttrGroupWithattrsBySpuId" resultType="com.yama.mall.product.vo.SpuItemAttrGroupVO">
+        select ag.attr_group_name,ag.attr_group_id,ar.attr_id,
+        pav.attr_name,pav.attr_value,pav.spu_id
+        from pms_attr_group ag
+        left join pms_attr_attrgroup_relation ar
+        on ag.attr_group_id=ar.attr_group_id
+        left join pms_product_attr_value pav
+        on pav.attr_id=ar.attr_id
+        where catelog_id=#{catalogId} and spu_id=#{spuId}
+    </select>
 
 
 </mapper>

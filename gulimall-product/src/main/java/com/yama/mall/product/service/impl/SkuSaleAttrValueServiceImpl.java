@@ -1,6 +1,9 @@
 package com.yama.mall.product.service.impl;
 
+import com.yama.mall.product.vo.SkuItemSaleAttrVO;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,6 +27,17 @@ public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao
         );
 
         return new PageUtils(page);
+    }
+
+    /**
+     * 查询商品的销售属性，并使用分组查询的方式
+     * @param spuId
+     * @return
+     */
+    @Override
+    public List<SkuItemSaleAttrVO> getSaleAttrValueBySpuId(Long spuId) {
+        List<SkuItemSaleAttrVO> skuItemSaleAttrVOS = this.getBaseMapper().getSaleAttrValueBySpuId(spuId);
+        return skuItemSaleAttrVOS;
     }
 
 }

@@ -25,6 +25,12 @@
 
 
     <dependencies>
+        <!--ConfigurationProperties注解支持-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
 
         <!--引入spingcache简化缓存的开发，同时还需要引入redis作为缓存管理器-->
         <dependency>
