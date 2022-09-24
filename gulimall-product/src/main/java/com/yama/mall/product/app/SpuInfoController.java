@@ -1,18 +1,18 @@
 package com.yama.mall.product.app;
 
-import java.util.Arrays;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
-import com.yama.mall.product.vo.SpuSaveVo;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.R;
+import com.yama.mall.product.entity.SpuInfoEntity;
+import com.yama.mall.product.service.SpuInfoService;
+import com.yama.mall.product.vo.SpuSaveVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.yama.mall.product.entity.SpuInfoEntity;
-import com.yama.mall.product.service.SpuInfoService;
-import com.yama.mall.common.utils.PageUtils;
-import com.yama.mall.common.utils.R;
+import java.util.Arrays;
+import java.util.Map;
+
+//import org.apache.shiro.authz.annotation.RequiresPermissions;
 
 
 
@@ -77,7 +77,7 @@ public class SpuInfoController {
     @RequestMapping("/save")
     //@RequiresPermissions("product:spuinfo:save")
 //    public R save(@RequestBody SpuInfoEntity spuInfo){
-    public R save(@RequestBody SpuSaveVo vo){
+    public R save(@RequestBody SpuSaveVO vo){
 //		spuInfoService.save(skuInfo);
         spuInfoService.saveSpuInfo(vo);
         return R.ok();

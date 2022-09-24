@@ -14,6 +14,7 @@ import lombok.Getter;
  * 错误码列表：
  * 10: 通用
  * 001：参数格式校验
+ * 002：验证码发送频率过高
  * 11: 商品
  * 12: 订单
  * 13: 购物车
@@ -24,6 +25,8 @@ public enum BizCodeEnume {
     UNKNOW_EXCEPTION(10000,"系统未知异常"),
 
     VAILD_EXCEPTION(10001,"参数格式校验失败"),
+
+    SMS_CODE_EXCEPTION(10002,"验证码发送次数过多，请稍后重试"),
 
     PRODUCT_UP_EXCEPTION(11000,"商品上架异常");
 

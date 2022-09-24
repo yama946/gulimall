@@ -1,0 +1,24 @@
+#配置服务的端口号
+server:
+  port: 14000
+
+spring:
+  application:
+    name: gulimall-auth-server
+  profiles:
+    active: dev
+#  开发过程中关闭thymeleaf缓存
+  thymeleaf:
+    cache: false
+
+
+
+#配置日志级别，进行显示sql日志
+logging:
+  level:
+    com.yama.mall: debug
+    
+#验证码的有效时间
+verityCode:
+  validTime:
+    minute: 3

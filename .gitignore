@@ -24,6 +24,7 @@ buildNumber.properties
 **/*.iml
 **/application-dev.yml
 **/bootstrap.properties
+*.exe
 
 
 

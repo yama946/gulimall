@@ -1,14 +1,22 @@
 package com.yama.mall.thirdparty;
 
-
+import com.yama.mall.thirdparty.component.ShortMessageCodeComponent;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
 @SpringBootTest
-class GulimallThirdPartyApplicationTests {
+public class GulimallThirdPartyApplicationTests {
+
+    @Autowired
+    ShortMessageCodeComponent shortMessageCodeComponent;
 
     @Test
-    void contextLoads() {
+    public void sendMessageCodeTest(){
+        shortMessageCodeComponent.sendShortMessageCode("18300627225","123456","3");
     }
 
 }

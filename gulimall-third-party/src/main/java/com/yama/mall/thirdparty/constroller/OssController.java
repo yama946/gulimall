@@ -23,7 +23,6 @@ public class OssController {
     @Autowired
     private OSS ossClient;
 
-
     @Value("${spring.cloud.alicloud.oss.endpoint}")
     private String endpoint;
     @Value("${spring.cloud.alicloud.access-key}")
