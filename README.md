@@ -408,3 +408,6 @@ public void addStocks(Long skuId, Long wareId, Integer skuNum) {
 @EnableConfigurationProperties(ThreadPoolConfigProperties.class)
 
 
+### 知识点28：Spring MVC提供RedirectAttributes，用来进行请求重定向时携带数据。
+
+

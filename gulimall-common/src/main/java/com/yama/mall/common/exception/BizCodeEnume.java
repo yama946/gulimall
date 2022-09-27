@@ -19,6 +19,7 @@ import lombok.Getter;
  * 12: 订单
  * 13: 购物车
  * 14: 物流
+ * 15: 用户
  */
 @Getter
 public enum BizCodeEnume {
@@ -28,7 +29,13 @@ public enum BizCodeEnume {
 
     SMS_CODE_EXCEPTION(10002,"验证码发送次数过多，请稍后重试"),
 
-    PRODUCT_UP_EXCEPTION(11000,"商品上架异常");
+    PRODUCT_UP_EXCEPTION(11000,"商品上架异常"),
+
+    PHONE_EXIST_EXCEPTION(15001,"手机号存在异常"),
+
+    USERNAME_EXIST_EXCEPTION(15002,"用户名存在异常"),
+
+    LOGINACCT_PASSWORD_INVALID_EXCEPITON(15003,"账号或密码异常");
 
     private int code;
 

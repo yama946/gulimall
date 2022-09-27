@@ -1,13 +1,14 @@
 package com.yama.mall.auth;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class GulimallAuthServerApplicationTests {
+//@SpringBootTest
+public class GulimallAuthServerApplicationTests {
 
     @Test
-    void contextLoads() {
+    public void Chars() {
+        char name='\u4e2d';
     }
 
 }

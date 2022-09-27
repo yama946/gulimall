@@ -1,7 +1,9 @@
 package com.yama.mall.auth.controller;
 
 import com.alibaba.fastjson.TypeReference;
+import com.yama.mall.auth.feign.MemberFeignService;
 import com.yama.mall.auth.feign.ThirdPartyFeignService;
+import com.yama.mall.auth.vo.UserLoginVO;
 import com.yama.mall.auth.vo.UserRegistVO;
 import com.yama.mall.common.constant.AuthServerConstant;
 import com.yama.mall.common.exception.BizCodeEnume;
@@ -37,6 +39,9 @@ public class LoginController {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private MemberFeignService memberFeignService;
 
     /**
      * 发送验证码
@@ -78,11 +83,15 @@ public class LoginController {
 
 
     /**
+     *注册要提交表单数据所有，我们使用post请求，并定义一个VO来接受表单数据
      *
-     * TODO: 重定向携带数据：利用session原理，将数据放在session中。
-     * TODO:只要跳转到下一个页面取出这个数据以后，session里面的数据就会删掉
      * TODO：分布下session问题
+     *
+     * TODO: 重定向携带数据：利用session原理，将数据放在session中。只要跳转到下一个页面取出这个数据以后，session里面的数据就会删掉
      * RedirectAttributes：重定向也可以保留数据，不会丢失
+     *
+     * Request method 'POST' not supported
+     * 用户注册->/regist[post]--->请求转发到view-controller映射的路径(此映射默认使用get请求)
      * 用户注册
      * @return
      * @param result  数据校验结果
@@ -96,8 +105,8 @@ public class LoginController {
             Map<String, String> errors = result.getFieldErrors().stream().collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
             attributes.addFlashAttribute("errors",errors);
 
-            //效验出错回到注册页面
-            return "redirect:http://auth.gulimall.com/reg.html";
+            //效验出错回到注册页面，防止重复提交
+            return "redirect:/reg.html";
         }
 
         //1、效验验证码
@@ -111,45 +120,54 @@ public class LoginController {
                 //删除验证码;令牌机制
                 stringRedisTemplate.delete(AuthServerConstant.SMS_CODE_CACHE_PREFIX+vos.getPhone());
                 //验证码通过，真正注册，调用远程服务进行注册
-//                R register = memberFeignService.register(vos);
-                R register = null;
+                R register = memberFeignService.register(vos);
                 if (register.getCode() == 0) {
                     //成功
-                    return "redirect:http://auth.gulimall.com/login.html";
+                    return "redirect:/login.html";
                 } else {
                     //失败
                     Map<String, String> errors = new HashMap<>();
                     errors.put("msg", register.getData("msg",new TypeReference<String>(){}));
                     attributes.addFlashAttribute("errors",errors);
-                    return "redirect:http://auth.gulimall.com/reg.html";
+                    return "redirect:/reg.html";
                 }
-
-
             } else {
                 //效验出错回到注册页面
                 Map<String, String> errors = new HashMap<>();
                 errors.put("code","验证码错误");
                 attributes.addFlashAttribute("errors",errors);
-                return "redirect:http://auth.gulimall.com/reg.html";
+                return "redirect:/reg.html";
             }
         } else {
             //效验出错回到注册页面
             Map<String, String> errors = new HashMap<>();
             errors.put("code","验证码错误");
             attributes.addFlashAttribute("errors",errors);
-            return "redirect:http://auth.gulimall.com/reg.html";
+            return "redirect:/reg.html";
         }
     }
 
+    /**
+     * 当前时表单的key-value值的形式提交数据，不可以使用@RequstBody注解
+     * @param userLoginVO
+     * @return
+     */
+    @PostMapping("/login")
+    public String login(UserLoginVO userLoginVO,RedirectAttributes redirectAttributes){
+        //远程登陆
+        R login = memberFeignService.login(userLoginVO);
+        if (login.getCode()==0){
+            //登陆成功成功定向，网站首页地址
+            return "redirect:localhost:88";
+        }else {
+            //登陆失败，并封装失败信息，前端页面显示
+            HashMap<String, String> errorMap = new HashMap<>();
+            errorMap.put("msg",login.getData("msg",new TypeReference<String>(){}));
 
-    //注册要提交表单数据所有，我们使用post请求，并定义一个VO来接受表单数据
-    @PostMapping("/regist")
-    //TODO 添加数据校验参数注解
-    public String register(@RequestBody UserRegistVO registVO){
+            redirectAttributes.addFlashAttribute("errors",errorMap);
 
-
-        //注册成功回到登陆页
-        return "redirect:/login.html";
+            //重定向到登录页
+            return "redirect:login.html";
+        }
     }
-
 }

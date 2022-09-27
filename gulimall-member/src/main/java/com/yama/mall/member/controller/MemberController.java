@@ -4,12 +4,13 @@ import java.util.Arrays;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.yama.mall.common.exception.BizCodeEnume;
+import com.yama.mall.member.exception.PhoneExistException;
+import com.yama.mall.member.exception.UserNameException;
+import com.yama.mall.member.vo.MemberLoginVO;
+import com.yama.mall.member.vo.MemberRegisterVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.yama.mall.member.entity.MemberEntity;
 import com.yama.mall.member.service.MemberService;
@@ -28,8 +29,45 @@ import com.yama.mall.common.utils.R;
 @RestController
 @RequestMapping("member/member")
 public class MemberController {
+
     @Autowired
     private MemberService memberService;
+
+
+
+    /**
+     * 远程调用接口，注册保存会员信息
+     * @param vo
+     * @return
+     */
+    @PostMapping("/register")
+    public R register(@RequestBody MemberRegisterVO vo){
+        try{
+            memberService.regist(vo);
+        }catch (PhoneExistException e){
+            R.error(BizCodeEnume.PHONE_EXIST_EXCEPTION.getCode(),BizCodeEnume.PHONE_EXIST_EXCEPTION.getMsg());
+        }catch (UserNameException e){
+            R.error(BizCodeEnume.USERNAME_EXIST_EXCEPTION.getCode(),BizCodeEnume.USERNAME_EXIST_EXCEPTION.getMsg());
+        }
+        return R.ok();
+    }
+
+    /**
+     * 远程用户登陆接口
+     * @param vo
+     * @return
+     */
+    @PostMapping("/login")
+    public R login(@RequestBody MemberLoginVO vo){
+        MemberEntity entity = memberService.login(vo);
+        if (entity!=null){
+            return R.ok().put("data",entity);
+        }else {
+            return R.error(BizCodeEnume.LOGINACCT_PASSWORD_INVALID_EXCEPITON.getCode(),BizCodeEnume.LOGINACCT_PASSWORD_INVALID_EXCEPITON.getMsg());
+        }
+    }
+
+
 
     /**
      * 列表
