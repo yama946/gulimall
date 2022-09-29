@@ -25,6 +25,13 @@
 
 
     <dependencies>
+        <!--热部署-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
         <!--ConfigurationProperties注解支持-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

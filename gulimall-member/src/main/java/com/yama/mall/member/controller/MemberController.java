@@ -9,6 +9,7 @@ import com.yama.mall.member.exception.PhoneExistException;
 import com.yama.mall.member.exception.UserNameException;
 import com.yama.mall.member.vo.MemberLoginVO;
 import com.yama.mall.member.vo.MemberRegisterVO;
+import com.yama.mall.member.vo.SoicalUserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +34,15 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
+    @PostMapping("/auth2/login")
+    public R oauth2Login(@RequestBody SoicalUserVO userVO){
+        MemberEntity entity = memberService.oauth2Login(userVO);
+        if (entity!=null){
+            return R.ok().setData(entity);
+        }else {
+            return R.error(BizCodeEnume.LOGINACCT_PASSWORD_INVALID_EXCEPITON.getCode(),BizCodeEnume.LOGINACCT_PASSWORD_INVALID_EXCEPITON.getMsg());
+        }
+    }
 
 
     /**

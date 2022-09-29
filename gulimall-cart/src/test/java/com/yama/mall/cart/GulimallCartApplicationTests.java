@@ -1,13 +1,14 @@
-package com.yama.mall.order;
+package com.yama.mall.cart;
+
 
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class GulimallOrderApplicationTests {
+public class GulimallCartApplicationTests {
 
     @Test
-    void contextLoads() {
+    public void contextLoads() {
     }
 
 }

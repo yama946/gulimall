@@ -52,12 +52,22 @@ spring:
         - id: gulimall-product_route
           uri: lb://gulimall-product
           predicates:
-            - Host=gulimall.com
+            - Host=gulimall.com,item.gulimall.com
 #        search.gulimall.com域名是为网站的搜索页的指定域名
-        - id: gulimall-search
+        - id: gulimall_search_route
           uri: lb://gulimall-search
           predicates:
             - Host=search.gulimall.com
+
+        - id: gulimall_auth_route
+          uri: lb://gulimall-auth-server
+          predicates:
+            - Host=auth.gulimall.com
+
+        - id: gulimall_cart_route
+          uri: lb://gulimall-cart
+          predicates:
+            - Host=cart.gulimall.com
         
 
   

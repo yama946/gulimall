@@ -6,6 +6,7 @@ import com.yama.mall.member.exception.PhoneExistException;
 import com.yama.mall.member.exception.UserNameException;
 import com.yama.mall.member.vo.MemberLoginVO;
 import com.yama.mall.member.vo.MemberRegisterVO;
+import com.yama.mall.member.vo.SoicalUserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import com.yama.mall.member.service.MemberService;
 public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> implements MemberService {
     @Autowired
     private MemberLevelDao memberLevelDao;
+
 
 
     @Override
@@ -122,6 +124,35 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
                 //密码校验失败
                 return null;
             }
+        }
+    }
+
+    /**
+     * 判断当前社交用户是否是第一登陆，如果是则注册
+     * @param userVO
+     * @return
+     */
+    @Override
+    public MemberEntity oauth2Login(SoicalUserVO userVO) {
+        MemberDao memberDao = this.baseMapper;
+        String socialUid = userVO.getSocialUId();
+        //判断用户是否为新用户
+        MemberEntity entity = memberDao.selectOne(new QueryWrapper<MemberEntity>().eq("social_uid", socialUid));
+        if (entity!=null){
+            //非新用户，进行更新数据
+            entity.setSocialUid(socialUid);
+            entity.setAccessToken(userVO.getAccessToken());
+            memberDao.updateById(entity);
+            return entity;
+        }else {
+            //新用户，进行注册
+            MemberEntity newUser = new MemberEntity();
+            newUser.setNickname(userVO.getLogin());
+            newUser.setSocialUid(userVO.getSocialUId());
+            newUser.setAccessToken(userVO.getAccessToken());
+            newUser.setLevelId(1L);
+            memberDao.insert(newUser);
+            return newUser;
         }
     }
 }

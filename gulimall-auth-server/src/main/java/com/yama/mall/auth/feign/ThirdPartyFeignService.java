@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 第三方远程调用接口
  */
-@FeignClient(" gulimall-third-party")
+@FeignClient("gulimall-third-party")
 public interface ThirdPartyFeignService {
     /**
      * 发送短信验证码
