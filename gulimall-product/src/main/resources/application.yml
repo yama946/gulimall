@@ -25,6 +25,9 @@ spring:
     cache: true
     #配置模板格式，可以不配置，直接创建后缀文件，添加名称空间
     mode: HTML
+# 配置存储spring session的类型
+  session:
+    store-type: redis
 
 
 # 配置mybatis-plus

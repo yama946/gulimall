@@ -1,6 +1,10 @@
 #配置服务的端口号
 server:
   port: 14000
+# 配置session的失效时间
+  servlet:
+    session:
+      timeout: 30m
 
 spring:
   application:
@@ -10,6 +14,10 @@ spring:
 #  开发过程中关闭thymeleaf缓存
   thymeleaf:
     cache: false
+# 指定springsession的存储类型
+  session:
+    store-type: redis
+
 
 #配置日志级别，进行显示sql日志
 logging:

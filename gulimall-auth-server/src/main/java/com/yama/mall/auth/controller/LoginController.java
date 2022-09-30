@@ -8,6 +8,7 @@ import com.yama.mall.auth.vo.UserRegistVO;
 import com.yama.mall.common.constant.AuthServerConstant;
 import com.yama.mall.common.exception.BizCodeEnume;
 import com.yama.mall.common.utils.R;
+import com.yama.mall.common.vo.MemberEntityVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -153,21 +154,55 @@ public class LoginController {
      * @return
      */
     @PostMapping("/login")
-    public String login(UserLoginVO userLoginVO,RedirectAttributes redirectAttributes){
+    public String login(UserLoginVO userLoginVO,RedirectAttributes redirectAttributes,HttpSession session){
         //远程登陆
         R login = memberFeignService.login(userLoginVO);
         if (login.getCode()==0){
+            //将返回值放到session中
+            MemberEntityVO entity = login.getData("data", new TypeReference<MemberEntityVO>() {});
+            log.info("手机号方式登陆成功：{}",entity);
+            session.setAttribute(AuthServerConstant.LOGIN_USER,entity);
             //登陆成功成功定向，网站首页地址
-            return "redirect:localhost:88";
+            return "redirect:http://gulimall.com";
         }else {
             //登陆失败，并封装失败信息，前端页面显示
             HashMap<String, String> errorMap = new HashMap<>();
             errorMap.put("msg",login.getData("msg",new TypeReference<String>(){}));
-
             redirectAttributes.addFlashAttribute("errors",errorMap);
-
             //重定向到登录页
-            return "redirect:login.html";
+            return "redirect:/login.html";
         }
+    }
+
+    /**
+     * 当我们登陆后，访问login.html路径应该直接跳转到首页，如果未登录才跳转到登陆页面
+     * 思路：
+     *      校验session中是否保存用户
+     * @param session
+     * @return
+     */
+    @GetMapping("login.html")
+    public String loginPage(HttpSession session){
+        Object loginUser = session.getAttribute(AuthServerConstant.LOGIN_USER);
+        if (loginUser==null){
+            //未登录
+            return "login";
+        }else {
+            //已登陆
+            return "redirect:http://gulimall.com";
+        }
+    }
+
+    /**
+     * 用户退出登陆
+     * 思路：
+     *      销毁session，重定向到首页
+     * @param session
+     * @return
+     */
+    @GetMapping("logout.html")
+    public String logOut(HttpSession session){
+        session.invalidate();
+        return "redirect:http://gulimall.com";
     }
 }

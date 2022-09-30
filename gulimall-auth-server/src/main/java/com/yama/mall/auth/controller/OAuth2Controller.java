@@ -3,23 +3,22 @@ package com.yama.mall.auth.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.yama.mall.auth.feign.MemberFeignService;
-import com.yama.mall.auth.vo.MemberEntityVO;
 import com.yama.mall.auth.vo.SoicalUserVO;
+import com.yama.mall.common.constant.AuthServerConstant;
 import com.yama.mall.common.utils.HttpUtils;
 import com.yama.mall.common.utils.R;
+import com.yama.mall.common.vo.MemberEntityVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.io.IOException;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,8 +41,17 @@ public class OAuth2Controller {
     @Value("${appSecret}")
     String clientSecret;
 
+    /**
+     *
+     * @param code
+     * @param session
+     * @return
+     * @throws Exception
+     */
+    //TODO 1、spring session默认发的令牌。session=xxxxx。默认作用域为：当前域（需要解决子域session共享问题，扩大cookie中session的domain的范围）
+    //TODO 2、使用JSON的序列化方式来序列化对象，将数据保存到redis中。
     @GetMapping("/oauth2/github/success")
-    public String githubOAth2(@RequestParam("code") String code) throws Exception {
+    public String githubOAth2(@RequestParam("code") String code, HttpSession session) throws Exception {
         //1.使用授权码code，获取access_token
         HashMap<String, String> bodyMap = new HashMap<>();
         bodyMap.put("client_id",clientId);
@@ -88,6 +96,14 @@ public class OAuth2Controller {
                     log.debug("远程调用成功");
                     MemberEntityVO entity = r.getData("data", new TypeReference<MemberEntityVO>() {});
                     log.info("用户登陆成功：{}",entity);
+                    /**
+                     * 1、第一次使用session；命令浏览器保存卡号，JSESSIONID这个cookie；
+                     * 以后浏览器访问那个网站就会带上这个网站的cookie。
+                     * 子域之间：gulimall.com auth.gulimall.com order.gulimall.com
+                     * 思路：
+                     * 发卡的时候，即使是子域系统发的卡，也能让父域直接使用。
+                     */
+                    session.setAttribute(AuthServerConstant.LOGIN_USER,entity);
                     //2.使用access_token，获取用户信息，进行判断是注册，还是直接登陆
                     //登陆成功返回，到首页
                     return "redirect:http://gulimall.com";

@@ -19,7 +19,7 @@ public class GulimallWebMvcConfig implements WebMvcConfigurer {
         String viewName1="login";
 
         //添加一个view-controller
-        registry.addViewController(urlPath1).setViewName(viewName1);
+//        registry.addViewController(urlPath1).setViewName(viewName1);
         registry.addViewController("/reg.html").setViewName("reg");
     }
 }

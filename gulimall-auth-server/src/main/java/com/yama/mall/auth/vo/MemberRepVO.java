@@ -2,10 +2,11 @@ package com.yama.mall.auth.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class MemberEntityVO {
+public class MemberRepVO implements Serializable {
 
     /**
      * id

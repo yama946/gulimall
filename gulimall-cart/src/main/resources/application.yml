@@ -10,8 +10,9 @@ spring:
 #  开发过程中关闭thymeleaf缓存
   thymeleaf:
     cache: false
-
-
+# 配置spring session的存储类型
+  session:
+    store-type: redis
 
 #配置日志级别，进行显示sql日志
 logging:
