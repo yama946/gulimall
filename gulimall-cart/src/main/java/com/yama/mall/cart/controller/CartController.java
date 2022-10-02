@@ -1,10 +1,8 @@
 package com.yama.mall.cart.controller;
 
-import com.yama.mall.cart.interceptor.CartInterceptor;
 import com.yama.mall.cart.service.CartService;
 import com.yama.mall.cart.vo.CartItemVo;
-import com.yama.mall.cart.vo.UserInfoTo;
-import com.yama.mall.common.constant.AuthServerConstant;
+import com.yama.mall.cart.vo.CartVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -35,16 +32,22 @@ public class CartController {
     private CartService cartService;
 
     /**
-     * 打开购物车列表页
+     * 去购物车页面的请求
+     * 浏览器有一个cookie:user-key 标识用户的身份，一个月过期
+     * 如果第一次使用jd的购物车功能，都会给一个临时的用户身份:
+     * 浏览器以后保存，每次访问都会带上这个cookie；
+     *
+     * 登录：session有
+     * 没登录：按照cookie里面带来user-key来做
+     * 第一次，如果没有临时用户，自动创建一个临时用户
+     *
+     * @description 打开购物车列表页
      * @return
      */
     @GetMapping("/cart.html")
-    public String cartListPage(HttpSession session){
-        //获取ThreadLocal中的数据
-        UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
-        log.info("threadLocal中的数据为:{}",userInfoTo);
-
-
+    public String cartListPage(Model model) throws ExecutionException, InterruptedException {
+        CartVo cart = cartService.getCart();
+        model.addAttribute("cart",cart);
         return "cartList";
     }
 

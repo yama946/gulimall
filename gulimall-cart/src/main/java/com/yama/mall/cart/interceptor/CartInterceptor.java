@@ -1,12 +1,11 @@
 package com.yama.mall.cart.interceptor;
 
-import com.yama.mall.cart.vo.UserInfoTo;
+import com.yama.mall.cart.to.UserInfoTo;
 import com.yama.mall.common.constant.AuthServerConstant;
 import com.yama.mall.common.constant.CartConstant;
 import com.yama.mall.common.vo.MemberEntityVO;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 

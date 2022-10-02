@@ -1,4 +1,4 @@
-package com.yama.mall.cart.vo;
+package com.yama.mall.cart.to;
 
 import lombok.Data;
 

@@ -2,13 +2,13 @@ package com.yama.mall.cart.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.yama.mall.cart.feign.ProductFeignService;
 import com.yama.mall.cart.interceptor.CartInterceptor;
 import com.yama.mall.cart.service.CartService;
 import com.yama.mall.cart.vo.CartItemVo;
+import com.yama.mall.cart.vo.CartVo;
 import com.yama.mall.cart.vo.SkuInfoVO;
-import com.yama.mall.cart.vo.UserInfoTo;
+import com.yama.mall.cart.to.UserInfoTo;
 import com.yama.mall.common.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 /**
  * 购物车信息保存在redis中
@@ -98,7 +99,7 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
-     * 从redis中获取商品信息
+     * 从redis中获取当前添加到购物车单个商品信息
      * @param skuId
      * @return
      */
@@ -112,7 +113,51 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
-     * 绑定获取操作hash的redis对象
+     * 获取购物车
+     * @return
+     */
+    @Override
+    public CartVo getCart() throws ExecutionException, InterruptedException{
+        CartVo cart = new CartVo();
+        //1.判断用户是临时用户还是登陆用户
+        UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
+        if (userInfoTo.getUserId()!= null){
+            //1、登陆用户
+            String loginCartKey = CART_PREFIX + userInfoTo.getUserId();
+            String tempCartKey = CART_PREFIX + userInfoTo.getUserKey();
+            //2、如果临时购物车数据还没有合并，则进行合并，并临时购物车----->构造方法，获取购物车的所有购物项
+            List<CartItemVo> tempCartItems = getCartItems(tempCartKey);
+            if (tempCartItems != null && tempCartItems.size()>0){
+                //临时购物车中存在购物数据
+                for (CartItemVo item : tempCartItems) {
+                    addToCart(item.getSkuId(), item.getCount());
+                }
+                //清除临时购物车
+                clearCart(tempCartKey);
+            }
+            //获取登陆后用户的购物车数据
+            List<CartItemVo> loginCartItems = getCartItems(loginCartKey);
+            cart.setItems(loginCartItems);
+        }else {
+            //1、临时用户,未登录
+            String cartRedisKey = CART_PREFIX + userInfoTo.getUserKey();
+            List<CartItemVo> tempCartItems = getCartItems(cartRedisKey);
+            cart.setItems(tempCartItems);
+        }
+        return cart;
+    }
+
+    /**
+     * 清除购物车
+     * @param tempCartKey
+     */
+    @Override
+    public void clearCart(String tempCartKey) {
+        stringRedisTemplate.delete(tempCartKey);
+    }
+
+    /**
+     * 绑定当前状态可以操作的购物车redis对象
      * @return
      */
     private BoundHashOperations<String, Object, Object> getCartOps() {
@@ -130,5 +175,26 @@ public class CartServiceImpl implements CartService {
         //3.当定操作指定键名的redis操作对象
         BoundHashOperations<String, Object, Object> cartHashOps = stringRedisTemplate.boundHashOps(cartKey);
         return cartHashOps;
+    }
+
+    /**
+     * 获取购物车中所有购物项
+     * @param cartRedisKey
+     * @return
+     */
+    public List<CartItemVo> getCartItems(String cartRedisKey){
+        BoundHashOperations<String, Object, Object> hashOps = stringRedisTemplate.boundHashOps(cartRedisKey);
+        //2、获取hash结构的value值集合
+        List<Object> cartItems = hashOps.values();
+        if (cartItems!=null && cartItems.size() >0){
+            //将购物项的Object进行转型
+            List<CartItemVo> collect = cartItems.stream().map(item -> {
+                String itemJson = JSON.toJSONString(item);
+                CartItemVo cartItemVo = JSON.parseObject(itemJson, CartItemVo.class);
+                return cartItemVo;
+            }).collect(Collectors.toList());
+            return collect;
+        }
+        return null;
     }
 }
