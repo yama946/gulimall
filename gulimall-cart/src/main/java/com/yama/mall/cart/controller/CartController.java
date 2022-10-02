@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.concurrent.ExecutionException;
@@ -49,6 +50,9 @@ public class CartController {
 
     /**
      * 添加商品到购物车
+     * TODO RedirectAttributes的使用
+     *      1.addFlashAttribute(): 将数据放到session域中可以从页面中取出，而且只能取一次
+     *      2.addAttribute()：将数据会放到重定向请求的请求参数中进行携带
      * @param skuId 商品id
      * @param num   商品数量
      * @return
@@ -56,11 +60,25 @@ public class CartController {
     @GetMapping("/addToCart")
     public String addToCart(@RequestParam("skuId") Long skuId,
                             @RequestParam("num") Integer num,
-                            Model model) throws ExecutionException, InterruptedException {
+                            RedirectAttributes redirectAttributes) throws ExecutionException, InterruptedException {
         CartItemVo cartItem = cartService.addToCart(skuId,num);
+//        model.addAttribute("cartItem",cartItem);
+        //重定向，并携带参数----->GET  http://cart.gulimall.com/addToCartSuccess.html?skuId=xx
+        redirectAttributes.addAttribute("skuId",skuId);
 
+        return "redirect:http://cart.gulimall.com/addToCartSuccess.html";
+    }
+
+    /**
+     * 防止刷新页面，重复添加商品信息
+     * 思路：
+     *      重定向，携带参数skuId，再从redis中查询到商品信息封装返回
+     * @return
+     */
+    @GetMapping("/addToCartSuccess.html")
+    public String addToCartSuccessPage(@RequestParam("skuId") Long skuId,Model model){
+        CartItemVo cartItem = cartService.getCartItem(skuId);
         model.addAttribute("cartItem",cartItem);
-
         return "success";
     }
 }
