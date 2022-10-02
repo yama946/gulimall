@@ -19,3 +19,10 @@ logging:
   level:
     com.yama.mall: debug
     
+#线程池属性配置参数
+gulimall:
+  thread:
+    coreSize: 2
+    maxSize: 4
+    keepAliveTime: 30
+    

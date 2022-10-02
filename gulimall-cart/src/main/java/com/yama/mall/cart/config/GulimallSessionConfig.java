@@ -9,8 +9,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
-//TODO 解决：1、spring session默认发的令牌。session=xxxxx。默认作用域为：当前域（需要解决子域session共享问题，扩大cookie中session的domain的范围）
-//TODO 解决2、使用JSON的序列化方式来序列化对象，将数据保存到redis中。
+//TODO 当前使用的redis库，不是保存session使用的库，能成功取出session吗？
 @EnableRedisHttpSession
 @Configuration
 public class GulimallSessionConfig {

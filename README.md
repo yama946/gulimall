@@ -411,3 +411,12 @@ public void addStocks(Long skuId, Long wareId, Integer skuNum) {
 ### 知识点28：Spring MVC提供RedirectAttributes，用来进行请求重定向时携带数据。
 
 
+### 知识点29:向redis中存放hash类型的数据，其hashKey必须是String类型，否则hi出现异常
+错误代码示例：
+redisTemplate.opsForHash().put("user-key",23,63);
+异常展示：
+java.lang.ClassCastException: java.lang.Integer cannot be cast to java.lang.String
+正确代码示例：
+redisTemplate.opsForHash().put("user-key","23"",63);
+
+

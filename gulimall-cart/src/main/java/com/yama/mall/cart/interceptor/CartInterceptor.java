@@ -23,7 +23,7 @@ import java.util.UUID;
 @Component
 public class CartInterceptor implements HandlerInterceptor {
     //TODO 使用ThreadLocal实现线程上的数据共享
-    public static ThreadLocal<UserInfoTo> threadLocal;
+    public static ThreadLocal<UserInfoTo> threadLocal = new ThreadLocal<>();
     /**
      * 目标执行前执行的拦截方法
      * @param request
@@ -45,12 +45,14 @@ public class CartInterceptor implements HandlerInterceptor {
         }
         //cookie中获取user-key键值
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie:cookies){
-            String name = cookie.getName();
-            if(Objects.equals(name, CartConstant.TEMP_USER_COOKIE_NAME)){
-                userInfoTo.setUserKey(cookie.getValue());
-                //标识是否存在user-key值
-                userInfoTo.setTempUser(true);
+        if(cookies!=null){
+            for (Cookie cookie:cookies){
+                String name = cookie.getName();
+                if(Objects.equals(name, CartConstant.TEMP_USER_COOKIE_NAME)){
+                    userInfoTo.setUserKey(cookie.getValue());
+                    //标识是否存在user-key值
+                    userInfoTo.setTempUser(true);
+                }
             }
         }
         //判断，如果第一次使用，则创建user-key

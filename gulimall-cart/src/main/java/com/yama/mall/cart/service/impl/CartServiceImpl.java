@@ -55,7 +55,7 @@ public class CartServiceImpl implements CartService {
         //1.获取绑定的操作对象
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
         //*.从redis中获取要添加商品是否存在
-        String product = (String) cartOps.get(skuId);
+        String product = (String) cartOps.get(skuId.toString());
         if (product==null){
             CartItemVo cartItemVo = new CartItemVo();
             //线程串行化执行任务1
@@ -106,7 +106,7 @@ public class CartServiceImpl implements CartService {
         UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
         //2.用户购物车键名
         String cartKey = "";
-        if (userInfoTo.isTempUser()){
+        if (userInfoTo.getUserId()==null){
             //临时用户键名：前缀+user-key
             cartKey =  CART_PREFIX+userInfoTo.getUserKey();
         }else {
