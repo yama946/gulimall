@@ -62,4 +62,4 @@ gulimall:
   thread:
     coreSize: 2
     maxSize: 4
-    keepAliveTime: 2
+    keepAliveTime: 30

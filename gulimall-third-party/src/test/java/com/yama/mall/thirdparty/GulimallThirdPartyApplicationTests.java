@@ -8,15 +8,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = GulimallThirdPartyApplication.class)
 public class GulimallThirdPartyApplicationTests {
 
     @Autowired
-    ShortMessageCodeComponent shortMessageCodeComponent;
+    ShortMessageCodeComponent codeComponent;
 
     @Test
     public void sendMessageCodeTest(){
-        shortMessageCodeComponent.sendShortMessageCode("18300627225","123456","3");
+        codeComponent.sendShortMessageCode("15236628719","235232","3");
     }
 
 }

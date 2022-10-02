@@ -4,11 +4,9 @@ import com.yama.mall.common.utils.R;
 import com.yama.mall.thirdparty.component.ShortMessageCodeComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("/sms")
 public class ShortMessageCodeController {
 
@@ -22,8 +20,10 @@ public class ShortMessageCodeController {
      * @param minute
      * @return
      */
-    @GetMapping("/sendcode")
-    public R sendShortMessageCode(@RequestParam("phone") String phone, @RequestParam("verityCode")String verityCode, @RequestParam("minute")String minute){
+    @GetMapping("/send/code")
+    public R sendShortMessageCode(@RequestParam("phone") String phone,
+                                  @RequestParam("verityCode")String verityCode,
+                                  @RequestParam("minute")String minute){
         shortMessageCodeComponent.sendShortMessageCode(phone,verityCode,minute);
         return R.ok();
     }

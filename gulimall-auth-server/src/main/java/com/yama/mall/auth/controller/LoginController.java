@@ -10,6 +10,7 @@ import com.yama.mall.common.exception.BizCodeEnume;
 import com.yama.mall.common.utils.R;
 import com.yama.mall.common.vo.MemberEntityVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -50,7 +52,7 @@ public class LoginController {
      * @return
      */
     @ResponseBody
-    @GetMapping("sms/sendCode")
+    @GetMapping("auth/sendcode")
     public R sendCode(@RequestParam("phone") String phone){
         String redisKey = AuthServerConstant.SMS_CODE_CACHE_PREFIX+phone;
         //2).60秒内不得重复调用，验证码获取接口，防止接口重复调用，60后如果未收到三方接口则再次调用
@@ -59,26 +61,31 @@ public class LoginController {
             long smsSaveTime = Long.parseLong(redisValue.split("_")[1]);
             Boolean timeStamp = System.currentTimeMillis()-smsSaveTime < 60000;
             if (timeStamp){
-                R.error(BizCodeEnume.SMS_CODE_EXCEPTION.getCode(),BizCodeEnume.SMS_CODE_EXCEPTION.getMsg());
+                return R.error(BizCodeEnume.SMS_CODE_EXCEPTION.getCode(),BizCodeEnume.SMS_CODE_EXCEPTION.getMsg());
             }
         }
         //TODO 1)接口防刷
-
-        //1.生成验证码,保存到redis中的value添加系统时间，用来判断下次请求的间隔时间
-        String code = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 6)+"_"+System.currentTimeMillis();
-        //2.发送验证码
-        String verityCode = code.split("_")[0];
-        R sendMessageResult = thirdPartyFeignService.sendShortMessageCode(phone, verityCode, minute);
         try{
+            //1.生成验证码,保存到redis中的value添加系统时间，用来判断下次请求的间隔时间
+            StringBuilder randomCode = new StringBuilder();
+            for (int i=0;i<6;i++){
+                int num = RandomUtils.nextInt(10);
+                randomCode=randomCode.append(num);
+            }
+            String code = randomCode.toString() +"_"+System.currentTimeMillis();
+            //2.发送验证码
+            String verityCode = code.split("_")[0];
+            R sendMessageResult = thirdPartyFeignService.sendShortMessageCode(phone,verityCode,minute);
             //3.判断是否发送成功，并保存到redis中
             if (sendMessageResult.getCode()==0) {
                 //验证码注册校验准备，保存到redis中，格式：key--->sms:code:电话
-                stringRedisTemplate.opsForValue().set(redisKey,code,Long.parseLong(minute),TimeUnit.SECONDS);
+                stringRedisTemplate.opsForValue().set(redisKey,code,Long.parseLong(minute),TimeUnit.MINUTES);
             }
         }catch (Exception e){
             e.printStackTrace();
             log.debug("验证码发送失败");
         }
+        log.info("验证码发送成功");
         return R.ok("验证码发送成功");
     }
 
@@ -107,7 +114,7 @@ public class LoginController {
             attributes.addFlashAttribute("errors",errors);
 
             //效验出错回到注册页面，防止重复提交
-            return "redirect:/reg.html";
+            return "redirect:http://auth.gulimall.com/reg.html";
         }
 
         //1、效验验证码
@@ -119,32 +126,32 @@ public class LoginController {
             //截取字符串
             if (code.equals(redisCode.split("_")[0])) {
                 //删除验证码;令牌机制
-                stringRedisTemplate.delete(AuthServerConstant.SMS_CODE_CACHE_PREFIX+vos.getPhone());
+//                stringRedisTemplate.delete(AuthServerConstant.SMS_CODE_CACHE_PREFIX+vos.getPhone());
                 //验证码通过，真正注册，调用远程服务进行注册
                 R register = memberFeignService.register(vos);
                 if (register.getCode() == 0) {
                     //成功
-                    return "redirect:/login.html";
+                    return "redirect:http://auth.gulimall.com/login.html";
                 } else {
                     //失败
                     Map<String, String> errors = new HashMap<>();
                     errors.put("msg", register.getData("msg",new TypeReference<String>(){}));
                     attributes.addFlashAttribute("errors",errors);
-                    return "redirect:/reg.html";
+                    return "redirect:http://auth.gulimall.com/reg.html";
                 }
             } else {
                 //效验出错回到注册页面
                 Map<String, String> errors = new HashMap<>();
                 errors.put("code","验证码错误");
                 attributes.addFlashAttribute("errors",errors);
-                return "redirect:/reg.html";
+                return "redirect:http://auth.gulimall.com/reg.html";
             }
         } else {
             //效验出错回到注册页面
             Map<String, String> errors = new HashMap<>();
             errors.put("code","验证码错误");
             attributes.addFlashAttribute("errors",errors);
-            return "redirect:/reg.html";
+            return "redirect:http://auth.gulimall.com/reg.html";
         }
     }
 

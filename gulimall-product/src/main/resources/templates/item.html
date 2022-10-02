@@ -523,17 +523,6 @@
                             <span>￥</span>
                             <span th:text="${#numbers.formatDecimal(item.info.price,3,2)}">4499.00</span>
                         </li>
-                        <li style="color: red" th:if="${item.seckillSkuVo != null}">
-
-                            <span th:if="${#dates.createNow().getTime() < item.seckillSkuVo.startTime}">
-                                商品将会在[[${#dates.format(new java.util.Date(item.seckillSkuVo.startTime),"yyyy-MM-dd HH:mm:ss")}]]进行秒杀
-                            </span>
-
-                            <span th:if="${#dates.createNow().getTime() >= item.seckillSkuVo.startTime && #dates.createNow().getTime() <= item.seckillSkuVo.endTime}">
-                                秒杀价  [[${#numbers.formatDecimal(item.seckillSkuVo.seckillPrice,1,2)}]]
-                            </span>
-
-                        </li>
                         <li>
                             <a href="/static/item/">
                                 预约说明
@@ -607,9 +596,6 @@
                             </div>
 
                         </li>
-                        <li>
-                            <span th:text="${item.hasStock?'有货':'无货'}">无货</span>， 此商品暂时售完
-                        </li>
                     </ul>
                 </div>
                 <div class="box-supply">
@@ -625,38 +611,12 @@
                         <dl>
                             <dt>选择[[${attr.attrName}]]</dt>
                             <dd th:each="val : ${attr.attrValues}">
-                                <a th:attr=" class=${#lists.contains(#strings.listSplit(val.skuIds,','),item.info.skuId.toString())
-                                   ? 'sku_attr_value checked': 'sku_attr_value'}, skus=${val.skuIds} "
-                                >
-                                    [[${val.attrValue}]]
-                                    <!--											<img src="/static/item/img/59ddfcb1Nc3edb8f1.jpg" /> -->
+                                <a>
+                                    [[${val}]]
                                 </a>
                             </dd>
                         </dl>
                     </div>
-                    <!--							<div class="box-attr-2 clear">-->
-                    <!--								<dl>-->
-                    <!--									<dt>选择版本</dt>-->
-                    <!--									<dd>-->
-                    <!--										<a href="/static/item/#">标准版</a>-->
-                    <!--									</dd>-->
-                    <!--									<dd>-->
-                    <!--										<a href="/static/item/#">套装版</a>-->
-                    <!--									</dd>-->
-                    <!--								</dl>-->
-                    <!--							</div>-->
-
-                    <!--							<div class="box-attr-2 clear">-->
-                    <!--								<dl>-->
-                    <!--									<dt>选择内存</dt>-->
-                    <!--									<dd>-->
-                    <!--										<a href="/static/item/#">64GB</a>-->
-                    <!--									</dd>-->
-                    <!--									<dd>-->
-                    <!--										<a href="/static/item/#">128GB</a>-->
-                    <!--									</dd>-->
-                    <!--								</dl>-->
-                    <!--							</div>-->
                 </div>
 
                 <div class="box-btns clear">
@@ -678,18 +638,9 @@
                         </div>
                     </div>
 
-                    <div class="box-btns-two"
-                         th:if="${item.seckillSkuVo == null }">
-                        <a class="addToCart" href="#" th:attr="skuId=${item.info.skuId}">
+                    <div class="box-btns-two">
+                        <a class="addToCart" href="http://cart.gulimall.com/addToCart" th:attr="skuId=${item.info.skuId}">
                             加入购物车
-                        </a>
-                    </div>
-
-                    <div class="box-btns-two"
-                         th:if="${item.seckillSkuVo != null && (#dates.createNow().getTime() >= item.seckillSkuVo.startTime && #dates.createNow().getTime() <= item.seckillSkuVo.endTime)}">
-                        <a class="seckill" href="#"
-                           th:attr="skuId=${item.info.skuId},sessionId=${item.seckillSkuVo.promotionSessionId},code=${item.seckillSkuVo.randomCode}">
-                            立即抢购
                         </a>
                     </div>
 
@@ -1136,6 +1087,7 @@
     </div>
 </div>
 <div class="headera">
+    <span th:text="${item}"></span>
     <div class="Logo-tu">
         <span><img src="/static/item/img/service_items_1.png"/></span>
         <span><img src="/static/item/img/service_items_2.png"/></span>
@@ -1352,8 +1304,6 @@
 
 <script src="/static/item/js/jquery1.9.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/item/js/js.js" type="text/javascript" charset="utf-8"></script>
-<script type="text/javascript">
-</script>
 
 <script>
     $(".sku_attr_value").click(function () {
@@ -1386,8 +1336,9 @@
         $(".sku_attr_value").parent().css({"border": "solid 1px #ccc"});
         $("a[class='sku_attr_value checked']").parent().css({"border": "solid 1px red"});
     };
-
-
+    /*
+    * 获取加入购物车商品的skuId，商品数量num
+    * */
     $(".addToCart").click(function () {
         let skuId = $(this).attr("skuId");
         let num = $("#productNum").val();

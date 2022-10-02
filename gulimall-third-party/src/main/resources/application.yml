@@ -9,4 +9,8 @@ spring:
 #配置服务开启端口
 server:
   port: 12000
-  
+
+
+logging:
+  level:
+    com.yama.mall: debug

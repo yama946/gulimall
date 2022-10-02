@@ -4,6 +4,7 @@ import com.yama.mall.common.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 第三方远程调用接口
@@ -17,9 +18,8 @@ public interface ThirdPartyFeignService {
      * @param minute    验证码有效时间
      * @return
      */
-    @GetMapping("/sms/sendcode")
-    R sendShortMessageCode(
-            @RequestParam("phone") String phone,
-            @RequestParam("verityCode")String verityCode,
-            @RequestParam("minute")String minute);
+    @GetMapping("/sms/send/code")
+    R sendShortMessageCode(@RequestParam("phone") String phone,
+                                  @RequestParam("verityCode")String verityCode,
+                                  @RequestParam("minute")String minute);
 }

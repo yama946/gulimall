@@ -16,7 +16,7 @@ public class UserRegistVO {
     //TODO 添加JSR303进行数据校验
     //用户名
     @NotEmpty(message = "用户名必须提交")
-    @Length(min = 6,max = 18,message = "用户名必须是6-18个字符")
+    @Length(min = 2,max = 10,message = "用户名必须是6-18个字符")
     private String userName;
 
     //密码

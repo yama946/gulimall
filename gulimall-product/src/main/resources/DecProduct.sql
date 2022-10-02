@@ -17,3 +17,12 @@ left join pms_sku_sale_attr_value val
 on info.sku_id=val.sku_id
 where info.spu_id=27
 group by val.attr_id,val.attr_name
+
+
+select
+*,
+CONCAT(attr_name,":",attr_value)
+from
+pms_sku_sale_attr_value
+where
+sku_id=53

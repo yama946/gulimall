@@ -27,4 +27,13 @@ logging:
 #验证码的有效时间
 verityCode:
   validTime:
-    minute: 3
+    minute: 30
+
+
+feign:
+  client:
+    config:
+      default:
+        #不设置connectTimeout会导致readTimeout设置不生效
+        connectTimeout: 300000
+        readTimeout: 600000

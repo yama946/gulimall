@@ -55,7 +55,6 @@ public class SkuInfoController {
      * 信息
      */
     @RequestMapping("/info/{skuId}")
-    //@RequiresPermissions("product:skuinfo:info")
     public R info(@PathVariable("skuId") Long skuId){
 		SkuInfoEntity skuInfo = skuInfoService.getById(skuId);
         R info = R.ok().put("skuInfo", skuInfo);
@@ -80,7 +79,6 @@ public class SkuInfoController {
     //@RequiresPermissions("product:skuinfo:update")
     public R update(@RequestBody SkuInfoEntity skuInfo){
 		skuInfoService.updateById(skuInfo);
-
         return R.ok();
     }
 

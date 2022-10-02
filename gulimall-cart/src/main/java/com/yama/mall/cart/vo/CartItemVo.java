@@ -99,9 +99,9 @@ public class CartItemVo {
         return this.price.multiply(new BigDecimal("" + this.count));
     }
 
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
-    }
+//    public void setTotalPrice(BigDecimal totalPrice) {
+//        this.totalPrice = totalPrice;
+//    }
 
 
 }

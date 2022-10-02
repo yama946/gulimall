@@ -27,8 +27,6 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
     @Autowired
     private MemberLevelDao memberLevelDao;
 
-
-
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<MemberEntity> page = this.page(
@@ -58,14 +56,12 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
 
         memberEntity.setMobile(vo.getPhone());
         memberEntity.setUsername(vo.getUserName());
+        memberEntity.setNickname(vo.getUserName());
         //密码进行盐值加密保存
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String encode = bCryptPasswordEncoder.encode(vo.getPassword());
         memberEntity.setPassword(encode);
-
         //TODO 设置用户其他默认信息
-
-
         //保存
         memberDao.insert(memberEntity);
     }

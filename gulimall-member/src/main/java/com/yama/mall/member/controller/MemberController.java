@@ -18,6 +18,7 @@ import com.yama.mall.member.service.MemberService;
 import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.common.utils.R;
 
+import javax.annotation.Resource;
 
 
 /**
@@ -28,7 +29,7 @@ import com.yama.mall.common.utils.R;
  * @date 2022-08-30 18:01:52
  */
 @RestController
-@RequestMapping("member/member")
+@RequestMapping("/member/member")
 public class MemberController {
 
     @Autowired

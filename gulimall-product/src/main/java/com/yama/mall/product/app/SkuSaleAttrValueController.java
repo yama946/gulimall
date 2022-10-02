@@ -1,15 +1,12 @@
 package com.yama.mall.product.app;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.yama.mall.product.entity.SkuSaleAttrValueEntity;
 import com.yama.mall.product.service.SkuSaleAttrValueService;
@@ -30,6 +27,18 @@ import com.yama.mall.common.utils.R;
 public class SkuSaleAttrValueController {
     @Autowired
     private SkuSaleAttrValueService skuSaleAttrValueService;
+
+    /**
+     * 远程接口：获取sku销售属性
+     * @param skuId
+     * @return
+     */
+    @GetMapping("/list/string/{skuId}")
+    List<String> getSkuSaleAttrValues(@PathVariable("skuId") Long skuId){
+        List<String> skuSaleAttrValues = skuSaleAttrValueService.getSkuSaleAttrValueBySkuId(skuId);
+        return skuSaleAttrValues;
+    }
+
 
     /**
      * 列表

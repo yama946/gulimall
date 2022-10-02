@@ -1,13 +1,19 @@
 package com.yama.mall.cart.controller;
 
 import com.yama.mall.cart.interceptor.CartInterceptor;
+import com.yama.mall.cart.service.CartService;
+import com.yama.mall.cart.vo.CartItemVo;
 import com.yama.mall.cart.vo.UserInfoTo;
 import com.yama.mall.common.constant.AuthServerConstant;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 问题点：没登陆，即使浏览器关闭后依然可以看到没登录时添加的购物车商品
@@ -23,8 +29,12 @@ import javax.servlet.http.HttpSession;
 @Slf4j
 @Controller
 public class CartController {
+
+    @Autowired
+    private CartService cartService;
+
     /**
-     * 打开购物成列表页
+     * 打开购物车列表页
      * @return
      */
     @GetMapping("/cart.html")
@@ -35,5 +45,22 @@ public class CartController {
 
 
         return "cartList";
+    }
+
+    /**
+     * 添加商品到购物车
+     * @param skuId 商品id
+     * @param num   商品数量
+     * @return
+     */
+    @GetMapping("/addToCart")
+    public String addToCart(@RequestParam("skuId") Long skuId,
+                            @RequestParam("num") Integer num,
+                            Model model) throws ExecutionException, InterruptedException {
+        CartItemVo cartItem = cartService.addToCart(skuId,num);
+
+        model.addAttribute("cartItem",cartItem);
+
+        return "success";
     }
 }
