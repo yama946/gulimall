@@ -15,4 +15,6 @@ public interface CartService {
     void clearCart(String tempCartKey);
 
     void checkCartItem(Long skuId, Integer checked);
+
+    void changeItemCount(Long skuId, Integer num);
 }
