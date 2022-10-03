@@ -164,6 +164,23 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
+     * 勾选购物项
+     * @param skuId
+     * @param checked
+     */
+    @Override
+    public void checkCartItem(Long skuId, Integer checked) {
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        //获取当前操作的购物项
+        CartItemVo cartItem = getCartItem(skuId);
+        //修改购物项的状态
+        cartItem.setCheck(checked==1?true:false);
+        //将修改后对象重新保存到redis中
+        String cartItemJson = JSON.toJSONString(cartItem);
+        cartOps.put(skuId.toString(),cartItemJson);
+    }
+
+    /**
      * 绑定当前状态可以操作的购物车redis对象
      * @return
      */

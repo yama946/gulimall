@@ -32,6 +32,19 @@ public class CartController {
     private CartService cartService;
 
     /**
+     * 勾选商品项，并进行刷新页面
+     * @param skuId
+     * @param checked
+     * @return
+     */
+    @GetMapping("/checkItem")
+    public String checkItem(@RequestParam("skuId") Long skuId,@RequestParam("checked") Integer checked){
+        cartService.checkCartItem(skuId,checked);
+        return "redirect:http://cart.gulimall.com/cart.html";
+    }
+
+
+    /**
      * 去购物车页面的请求
      * 浏览器有一个cookie:user-key 标识用户的身份，一个月过期
      * 如果第一次使用jd的购物车功能，都会给一个临时的用户身份:
