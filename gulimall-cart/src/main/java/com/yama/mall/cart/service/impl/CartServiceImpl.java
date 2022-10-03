@@ -132,6 +132,13 @@ public class CartServiceImpl implements CartService {
                 for (CartItemVo item : tempCartItems) {
                     addToCart(item.getSkuId(), item.getCount());
                 }
+                /*tempCartItems.forEach(item->{
+                    try {
+                        addToCart(item.getSkuId(), item.getCount());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });*/
                 //清除临时购物车
                 clearCart(tempCartKey);
             }
@@ -189,7 +196,7 @@ public class CartServiceImpl implements CartService {
         if (cartItems!=null && cartItems.size() >0){
             //将购物项的Object进行转型
             List<CartItemVo> collect = cartItems.stream().map(item -> {
-                String itemJson = JSON.toJSONString(item);
+                String itemJson = (String)item;
                 CartItemVo cartItemVo = JSON.parseObject(itemJson, CartItemVo.class);
                 return cartItemVo;
             }).collect(Collectors.toList());
