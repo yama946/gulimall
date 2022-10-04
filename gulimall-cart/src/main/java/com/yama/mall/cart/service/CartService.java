@@ -17,4 +17,6 @@ public interface CartService {
     void checkCartItem(Long skuId, Integer checked);
 
     void changeItemCount(Long skuId, Integer num);
+
+    void deleteCartItem(Long skuId);
 }

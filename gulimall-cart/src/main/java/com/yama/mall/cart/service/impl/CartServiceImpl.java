@@ -198,6 +198,16 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
+     * 删除商品项，并刷新页面
+     * @param skuId
+     */
+    @Override
+    public void deleteCartItem(Long skuId) {
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        cartOps.delete(skuId.toString());
+    }
+
+    /**
      * 绑定当前状态可以操作的购物车redis对象
      * @return
      */
