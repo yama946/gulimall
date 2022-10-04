@@ -19,6 +19,12 @@ spring:
 # 配置jackson日期转换格式
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+# thymeleaf模板相关配置
+  thymeleaf:
+    cache: false
+  # 配置存储spring session的类型
+  session:
+    store-type: redis
 
 # 配置mybatis-plus
 mybatis-plus:
