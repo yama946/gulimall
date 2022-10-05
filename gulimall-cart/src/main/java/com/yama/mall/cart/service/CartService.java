@@ -3,6 +3,7 @@ package com.yama.mall.cart.service;
 import com.yama.mall.cart.vo.CartItemVo;
 import com.yama.mall.cart.vo.CartVo;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface CartService {
@@ -19,4 +20,11 @@ public interface CartService {
     void changeItemCount(Long skuId, Integer num);
 
     void deleteCartItem(Long skuId);
+
+    /**
+     * 获取当前登陆用户
+     * @return
+     */
+    List<CartItemVo> getUserCartItems();
+
 }

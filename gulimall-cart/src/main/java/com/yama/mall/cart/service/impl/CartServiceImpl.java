@@ -16,6 +16,7 @@ import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -205,6 +206,39 @@ public class CartServiceImpl implements CartService {
     public void deleteCartItem(Long skuId) {
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
         cartOps.delete(skuId.toString());
+    }
+
+    /**
+     * 远程接口方法：获取当前用户选中的的购物项
+     * @return
+     */
+    @Override
+    public List<CartItemVo> getUserCartItems() {
+        //ThreadLocal中获取用户信息
+        UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
+        if (userInfoTo.getUserId()==null){
+            //用户登陆异常
+            return null;
+        }else {
+            //用户登陆成功
+            String loginCartKey = CART_PREFIX + userInfoTo.getUserId();
+            //获取所有购物项
+            List<CartItemVo> cartItems = getCartItems(loginCartKey);
+            //获取所有选中的购物项
+            List<CartItemVo> checkedCartItems = cartItems.stream().filter(item -> item.getCheck())
+                    .map(item->{
+                        /**
+                         * TODO 如何同步购物车中的商品价格？？？？
+                         * 我们是从购物车中获取数据，如果购物车添加后，如果一段时间后，商品价格变化并没有同步到购物车中
+                         * 则提交的订单价格需要重新查询，远程获取。
+                         */
+                        BigDecimal itemPrice = productFeignService.getPrice(item.getSkuId());
+                        item.setPrice(itemPrice);
+                        return item;
+                    })
+                    .collect(Collectors.toList());
+            return checkedCartItems;
+        }
     }
 
     /**

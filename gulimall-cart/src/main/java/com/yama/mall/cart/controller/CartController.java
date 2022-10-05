@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -30,6 +31,16 @@ public class CartController {
 
     @Autowired
     private CartService cartService;
+
+    /**
+     * 远程接口:获取当前用户选中的购物项
+     * @return
+     */
+    @GetMapping("/concurrentUserCartItems")
+    public List<CartItemVo> getconcurrentUserCartItems(){
+        List<CartItemVo> cartItems = cartService.getUserCartItems();
+        return cartItems;
+    }
 
     @GetMapping("/deleteItem")
     public String deleteItem(@RequestParam("skuId") Long skuId){

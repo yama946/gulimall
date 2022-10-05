@@ -1,4 +1,4 @@
-package com.yama.mall.order.controller;
+package com.yama.mall.order.web;
 
 import com.yama.mall.order.entity.OrderEntity;
 import com.yama.mall.order.entity.OrderReturnReasonEntity;
@@ -14,8 +14,8 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * @description:
-date: 2022年10月04日 周二 12:28
+ * @description: 测试rabbitmq消息发送
+ * @date: 2022年10月04日 周二 12:28
  * @author: yama946
  */
 @Slf4j
@@ -29,7 +29,7 @@ public class RabbitControllerTest {
 
     String queueStr = "gulimall.queue";
 
-    @GetMapping("/sendMQ")
+    @GetMapping("test/sendMQ")
     public String testSendMessage(){
         //1.发送字符串消息
         String msg = "hello rabbitmq";

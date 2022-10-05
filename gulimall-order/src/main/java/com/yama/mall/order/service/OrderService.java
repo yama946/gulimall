@@ -3,8 +3,10 @@ package com.yama.mall.order.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.order.entity.OrderEntity;
+import com.yama.mall.order.vo.OrderConfirmVO;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 订单
@@ -16,5 +18,11 @@ import java.util.Map;
 public interface OrderService extends IService<OrderEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 获取用户订单信息
+     * @return
+     */
+    OrderConfirmVO confirmOrder() throws ExecutionException, InterruptedException;
 }
 

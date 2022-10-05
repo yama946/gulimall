@@ -1,15 +1,12 @@
 package com.yama.mall.member.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.yama.mall.member.entity.MemberReceiveAddressEntity;
 import com.yama.mall.member.service.MemberReceiveAddressService;
@@ -30,6 +27,17 @@ import com.yama.mall.common.utils.R;
 public class MemberReceiveAddressController {
     @Autowired
     private MemberReceiveAddressService memberReceiveAddressService;
+
+    /**
+     * 根据用户id，获取用户地址
+     * @param memeberId
+     * @return
+     */
+    @GetMapping("/{memeberId}/addresses")
+    public List<MemberReceiveAddressEntity> getAddress(@PathVariable("memberId") Long memeberId){
+        return memberReceiveAddressService.getAddress(memeberId);
+    }
+
 
     /**
      * 列表

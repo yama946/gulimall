@@ -7,7 +7,6 @@ import java.util.Date;
 
 @Data
 public class MemberRepVO implements Serializable {
-
     /**
      * id
      */
