@@ -3,6 +3,7 @@ package com.yama.mall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.product.entity.SpuInfoEntity;
+import com.yama.mall.product.to.SpuInfoTo;
 import com.yama.mall.product.vo.SpuSaveVO;
 
 import java.util.Map;
@@ -26,5 +27,11 @@ public interface SpuInfoService extends IService<SpuInfoEntity> {
 
     void up(Long spuId);
 
+    /**
+     * 通过skuId获取spu实体类
+     * @param skuId
+     * @return
+     */
+    SpuInfoTo getSpuInfoBySkuId(Long skuId);
 }
 

@@ -232,6 +232,7 @@ public class CartServiceImpl implements CartService {
                          * 我们是从购物车中获取数据，如果购物车添加后，如果一段时间后，商品价格变化并没有同步到购物车中
                          * 则提交的订单价格需要重新查询，远程获取。
                          */
+                        //TODO  debug--> BigDecimal转码异常，改变返回类型为R，获取对象为String
                         BigDecimal itemPrice = productFeignService.getPrice(item.getSkuId());
                         item.setPrice(itemPrice);
                         return item;

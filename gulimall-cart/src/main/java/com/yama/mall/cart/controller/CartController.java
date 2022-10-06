@@ -34,6 +34,7 @@ public class CartController {
 
     /**
      * 远程接口:获取当前用户选中的购物项
+     * TODO debug-->远程调用异常，添加@ResponseBody远程调用返回为json数据
      * @return
      */
     @GetMapping("/concurrentUserCartItems")

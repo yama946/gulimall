@@ -4,6 +4,7 @@ import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.common.utils.R;
 import com.yama.mall.product.entity.SpuInfoEntity;
 import com.yama.mall.product.service.SpuInfoService;
+import com.yama.mall.product.to.SpuInfoTo;
 import com.yama.mall.product.vo.SpuSaveVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,18 @@ public class SpuInfoController {
     @Autowired
     private SpuInfoService spuInfoService;
 
+    /**
+     * 根据skuid获取spu信息
+     * @param skuId
+     * @return
+     */
+    @GetMapping("/{skuId}")
+    public R getSpuInfoBySkuId(@PathVariable("skuId") Long skuId){
 
+        SpuInfoTo spuInfo = spuInfoService.getSpuInfoBySkuId(skuId);
+
+        return R.ok().setData(spuInfo);
+    }
 
     /**
      * /product/spuinfo/{spuId}/up

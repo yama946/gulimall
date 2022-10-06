@@ -3,7 +3,9 @@ package com.yama.mall.ware.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.ware.entity.WareInfoEntity;
+import com.yama.mall.ware.vo.FareVO;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -16,5 +18,12 @@ import java.util.Map;
 public interface WareInfoService extends IService<WareInfoEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 根据收获地址计算运费信息
+     * @param attrId
+     * @return
+     */
+    FareVO getFare(Long attrId);
 }
 

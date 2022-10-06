@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @description: 提交订单页面模型VO
@@ -30,13 +31,35 @@ public class OrderConfirmVO {
     Integer integration;
 
     /**
+     *
      * 防止订单重复提交，我们为订单设置一个orderToken值，进行区分订单。
      */
     @Getter @Setter
     String orderToken;
 
+    /**
+     * 直接将库存信息保存到confirm中
+     */
+    @Getter @Setter
+    Map<Long,Boolean> stocks;
+
     //订单总金额
 //    BigDecimal totalPrice;
+
+    /**
+     * 获取商品数量，get方法对于thymeleaf相当于存在count属性
+     * @return
+     */
+    public Integer getCount(){
+        int i =0;
+        if (items!=null){
+            for (OrderItemVO item : items){
+                BigDecimal multiply = item.getPrice().multiply(new BigDecimal(item.getCount().toString()));
+                i+=item.getCount();
+            }
+        }
+        return i;
+    }
 
     /**
      * 获取商品总价

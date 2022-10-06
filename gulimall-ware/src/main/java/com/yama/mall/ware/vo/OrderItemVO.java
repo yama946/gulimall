@@ -1,4 +1,4 @@
-package com.yama.mall.order.vo;
+package com.yama.mall.ware.vo;
 
 import lombok.Data;
 

@@ -17,6 +17,7 @@ import com.yama.mall.product.feign.CouponFeignService;
 import com.yama.mall.product.feign.SearchFeignService;
 import com.yama.mall.product.feign.WareFeignService;
 import com.yama.mall.product.service.*;
+import com.yama.mall.product.to.SpuInfoTo;
 import com.yama.mall.product.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -199,6 +200,23 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
 
     }
+
+    /**
+     * 通过skuId获取Spu实体类信息
+     * @param skuId
+     * @return
+     */
+    @Override
+    public SpuInfoTo getSpuInfoBySkuId(Long skuId) {
+        SpuInfoTo spuInfoTo = new SpuInfoTo();
+        SkuInfoEntity skuInfo = skuInfoService.getById(skuId);
+        SpuInfoEntity spuInfo = this.getById(skuInfo.getSpuId());
+        BeanUtils.copyProperties(spuInfo,spuInfoTo);
+        BrandEntity brand = brandService.getById(spuInfo.getBrandId());
+        spuInfoTo.setBrandName(brand.getName());
+        return spuInfoTo;
+    }
+
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {

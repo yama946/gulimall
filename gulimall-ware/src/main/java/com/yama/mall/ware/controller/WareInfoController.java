@@ -1,15 +1,13 @@
 package com.yama.mall.ware.controller;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.yama.mall.ware.vo.FareVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.yama.mall.ware.entity.WareInfoEntity;
 import com.yama.mall.ware.service.WareInfoService;
@@ -30,6 +28,17 @@ import com.yama.mall.common.utils.R;
 public class WareInfoController {
     @Autowired
     private WareInfoService wareInfoService;
+
+    /**
+     * 查询商品的运费信息
+     * @param attrId 收获地址的Id
+     * @return
+     */
+    @GetMapping("/fare")
+    public R getFare(@RequestParam("attrId") Long attrId){
+        FareVO fare = wareInfoService.getFare(attrId);
+        return R.ok().setData(fare);
+    }
 
     /**
      * /ware/wareinfo/list

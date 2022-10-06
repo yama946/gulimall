@@ -1,8 +1,13 @@
 package com.yama.mall.ware.service.impl;
 
 import com.yama.mall.common.utils.R;
+import com.yama.mall.ware.exception.NoStockException;
 import com.yama.mall.ware.feign.ProductFeignService;
+import com.yama.mall.ware.vo.LockStockResult;
+import com.yama.mall.ware.vo.OrderItemVO;
 import com.yama.mall.ware.vo.SkuHasStockVO;
+import com.yama.mall.ware.vo.WareSkuLockVO;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +25,7 @@ import com.yama.mall.common.utils.Query;
 import com.yama.mall.ware.dao.WareSkuDao;
 import com.yama.mall.ware.entity.WareSkuEntity;
 import com.yama.mall.ware.service.WareSkuService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 
@@ -31,6 +37,13 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     @Autowired
     private ProductFeignService productFeignService;
+
+    @Data
+    class SkuWareHasStock {
+        private Long skuId;
+        private Integer num;
+        private List<Long> wareId;
+    }
 
     /**
      * 判断sku是否存在库存
@@ -47,6 +60,60 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             return stockVO;
         }).collect(Collectors.toList());
         return stocks;
+    }
+
+    /**
+     * TODO 为某个订单锁定库存
+     * @param vo
+     * @return
+     */
+    @Transactional
+    @Override
+    public Boolean orderLockStock(WareSkuLockVO vo) {
+        //1、按照下单的收货地址，找到一个就近仓库，锁定库存【实际中复杂逻辑实现】
+        //2、找到每个商品在哪个仓库都有库存【本项目中简单逻辑实现】
+        List<OrderItemVO> locks = vo.getLocks();
+
+        List<SkuWareHasStock> collect = locks.stream().map((item) -> {
+            SkuWareHasStock stock = new SkuWareHasStock();
+            Long skuId = item.getSkuId();
+            stock.setSkuId(skuId);
+            stock.setNum(item.getCount());
+            //查询这个商品在哪个仓库有库存
+            List<Long> wareIdList = wareSkuDao.listWareIdHasSkuStock(skuId);
+            stock.setWareId(wareIdList);
+            return stock;
+        }).collect(Collectors.toList());
+
+        //3.锁定库存
+        for (SkuWareHasStock hasStock:collect){
+            Boolean skuStocked=false;
+            Long skuId = hasStock.getSkuId();
+            List<Long> wareIds = hasStock.getWareId();
+            if (wareIds==null || wareIds.size() ==0){
+                //商品没有库存
+                throw new NoStockException(skuId);
+            }
+            //商品存在库存，每个仓库依次扣减库存
+            for (Long wareId:wareIds) {
+                //锁定成功就返回1，失败就返回0
+                Long count = wareSkuDao.lockSkuStock(skuId,wareId,hasStock.getNum());
+                if (count==1){
+                    //锁定成功
+                    skuStocked=true;
+                    break;
+                }else {
+                    //当前仓库锁定失败，尝试下一个
+                }
+            }
+            if (!skuStocked){
+                //锁定失败
+                throw new NoStockException(skuId);
+            }
+
+        }
+        //3.所有商品锁定仓库成功
+        return true;
     }
 
     /**
@@ -110,6 +177,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
      * @param wareId
      * @param skuNum
      */
+    @Transactional
     @Override
     public void addStocks(Long skuId, Long wareId, Integer skuNum) {
         //判断当前是否存在此库存信息，否则是保存操作

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @author: yama946
  */
 @Controller
-public class HelloController {
+public class HelloControllerTest {
     @GetMapping("test/{page}.html")
     public String listPage(@PathVariable("page") String page){
         return page;

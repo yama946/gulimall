@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.yama.mall.ware.vo.LockStockResult;
 import com.yama.mall.ware.vo.SkuHasStockVO;
+import com.yama.mall.ware.vo.WareSkuLockVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,18 @@ import com.yama.mall.common.utils.R;
 public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
+
+    /**
+     * 库存锁定
+     * @param vo
+     * @return
+     */
+    @PostMapping("/order/lock/stock")
+    public R orderLockStock(@RequestBody WareSkuLockVO vo){
+        //返回库存锁定结果
+        Boolean lockStockResults = wareSkuService.orderLockStock(vo);
+        return R.ok().setData(lockStockResults);
+    }
 
     /**
      * 判断sku中是否有库存
