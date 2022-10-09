@@ -1,11 +1,17 @@
 package com.yama.mall.order.service.impl;
 
 import com.alibaba.fastjson.TypeReference;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yama.mall.common.utils.PageUtils;
+import com.yama.mall.common.utils.Query;
 import com.yama.mall.common.utils.R;
 import com.yama.mall.common.vo.MemberEntityVO;
 import com.yama.mall.order.canstant.OrderConstant;
+import com.yama.mall.order.dao.OrderDao;
+import com.yama.mall.order.entity.OrderEntity;
 import com.yama.mall.order.entity.OrderItemEntity;
 import com.yama.mall.order.enume.OrderStatusEnum;
 import com.yama.mall.order.feign.CartFeignService;
@@ -14,13 +20,20 @@ import com.yama.mall.order.feign.ProductFeignService;
 import com.yama.mall.order.feign.WareFeignService;
 import com.yama.mall.order.interceptor.LoginUserInterceptor;
 import com.yama.mall.order.service.OrderItemService;
+import com.yama.mall.order.service.OrderService;
 import com.yama.mall.order.to.OrderCreateTO;
 import com.yama.mall.order.to.SpuInfoTo;
 import com.yama.mall.order.vo.*;
+import io.seata.spring.annotation.GlobalTransactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -30,20 +43,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yama.mall.common.utils.PageUtils;
-import com.yama.mall.common.utils.Query;
-
-import com.yama.mall.order.dao.OrderDao;
-import com.yama.mall.order.entity.OrderEntity;
-import com.yama.mall.order.service.OrderService;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-
+@Slf4j
 @Service("orderService")
 public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> implements OrderService {
 
@@ -103,6 +103,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         //TODO :获取当前线程请求头信息(解决Feign异步调用丢失请求头问题)
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         //TODO 异步模式下，远程过程调用导致请求头丢失
+        //获取用户收货地址
         CompletableFuture<Void> getAddresses = CompletableFuture.runAsync(() -> {
             //每一个线程都来共享之前的请求数据
             RequestContextHolder.setRequestAttributes(requestAttributes);
@@ -153,14 +154,18 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     /**
+     * TODO 分布式事务解决方案
      * 下单操作，保存提交的订单信息
+     * 本地事务，在分布式系统中，只能控制住自己的回滚，控制不了其他服务的回滚
+     * 分布式事务：最大的原因，网络问题导致远程调用异常，本地事务回滚，远程事务成功，却无法回滚。
+     *
      * @param vo
      * @return
      */
     // @Transactional(isolation = Isolation.READ_COMMITTED) 设置事务的隔离级别
     // @Transactional(propagation = Propagation.REQUIRED)   设置事务的传播级别
     @Transactional(rollbackFor = Exception.class)
-    // @GlobalTransactional(rollbackFor = Exception.class)
+    @GlobalTransactional(rollbackFor = Exception.class)
     @Override
     public SubmitOrderResponseVO submitOrder(OrderSubmitVO vo) {
         confirmVOThreadLocal.set(vo);
@@ -185,6 +190,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         if (result == 0L) {
             //令牌验证失败
             response.setCode(1);
+            log.debug("令牌验证失败");
             return response;
         } else {
             //令牌验证成功
@@ -212,22 +218,28 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     return orderItemVO;
                 }).collect(Collectors.toList());
                 wareSkuLock.setLocks(orderItems);
-                //TODO 远程锁定库存
+                //TODO 4、远程锁定库存
+                //TODO 高并发场景，分布式事务解决方案(seta的AT模式多处使用锁机制，不适合并发场景)
+                //1.为了保证高并发，让库存服务自己回滚。可以发消息给库存服务
+                //2.使用消息队列，让库存服务本身进行自己的解锁服务，可以存在一定的延迟，达到最终一致性即可。
                 R lockStockResult = wareFeignService.orderLockStock(wareSkuLock);
                 if (lockStockResult.getData(new TypeReference<Boolean>(){})){
                     //库存锁定成功
                     response.setOrder(order.getOrder());
+                    //5、TODO 远程扣减积分
+                    int i=10/0;
                     return response;
                 }else {
                     //库存锁定失败，抛出异常
                     response.setCode(3);
+                    log.debug("库存锁定异常");
                     return response;
+                    //TODO 抛出库存异常---优化
                 }
-
-
             } else {
                 //金额对比失败
                 response.setCode(2);
+                log.debug("验价失败");
                 return response;
             }
         }
@@ -276,6 +288,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         computePrice(orderEntity,orderItemEntities);
 
         createTo.setOrder(orderEntity);
+        createTo.setOrderItems(orderItemEntities);
         return createTo;
     }
 

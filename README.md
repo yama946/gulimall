@@ -220,7 +220,7 @@ void deleteBatchRelation(@Param("entities") List<AttrAttrgroupRelationEntity> en
 
 ### 知识点17：设置改变隔离级别，在debug过程中方便查看数据库数据的变化，隔离级别只是为了防止多线程问题导致数据搓读
 ** 隔离级别的改变，并不影响事务，如果出现异常，即使数据库数据设置了，也会回滚取消**
-**设置隔离级别的语句：set session transaction isolation level uncommitted
+**设置隔离级别的语句：set session transaction isolation level read uncommitted
 
 
 ### 知识点18：BigDecimal的使用

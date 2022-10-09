@@ -30,12 +30,12 @@ public class MemberReceiveAddressController {
 
     /**
      * 根据用户id，获取用户地址
-     * @param memeberId
+     * @param memberId
      * @return
      */
-    @GetMapping("/{memeberId}/addresses")
-    public List<MemberReceiveAddressEntity> getAddress(@PathVariable("memberId") Long memeberId){
-        return memberReceiveAddressService.getAddress(memeberId);
+    @GetMapping("/{memberId}/addresses")
+    public List<MemberReceiveAddressEntity> getAddress(@PathVariable("memberId") Long memberId){
+        return memberReceiveAddressService.getAddress(memberId);
     }
 
 
@@ -43,7 +43,6 @@ public class MemberReceiveAddressController {
      * 列表
      */
     @RequestMapping("/list")
-    //@RequiresPermissions("member:memberreceiveaddress:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = memberReceiveAddressService.queryPage(params);
 
@@ -52,10 +51,9 @@ public class MemberReceiveAddressController {
 
 
     /**
-     * 信息
+     * 根据id查询收货地址信息
      */
     @RequestMapping("/info/{id}")
-    //@RequiresPermissions("member:memberreceiveaddress:info")
     public R info(@PathVariable("id") Long id){
 		MemberReceiveAddressEntity memberReceiveAddress = memberReceiveAddressService.getById(id);
 

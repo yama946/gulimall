@@ -30,7 +30,7 @@ import java.util.Scanner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class GulimallOrderApplicationTests {
-    @Autowired
+    /*@Autowired
     AmqpAdmin amqpAdmin;
 
     @Autowired
@@ -42,16 +42,16 @@ public class GulimallOrderApplicationTests {
 
 
 
-    /**
+    *//**
      * 测试发送消息-----使用RabbitTemplate组件
-     */
+     *//*
     @Test
     public void testSendMessage(){
         //1.发送字符串消息
         String msg = "hello rabbitmq";
 //        rabbitTemplate.convertAndSend(exchange,"rabbitmq",msg);
         //2.发送对象消息，如果发送的消息是个对象，会使用序列化机制序列化对象，将对象写出去，对象类需要实现序列化Serializable接口
-        /*for (int i = 0; i < 10; i++) {
+        *//*for (int i = 0; i < 10; i++) {
             OrderReturnReasonEntity reasonEntity = new OrderReturnReasonEntity();
             reasonEntity.setId(1L);
             reasonEntity.setCreateTime(new Date());
@@ -59,7 +59,7 @@ public class GulimallOrderApplicationTests {
             //3.发送对象类型的消息，我们也可以使用json---->替换rabbitTemplate中的messageConverter对象
             rabbitTemplate.convertAndSend(exchange,"rabbitmq",reasonEntity);
             log.info("消息发送成功:{}",i);
-        }*/
+        }*//*
         for (int i = 0; i < 10; i++) {
             if (i%2==0){
                 OrderReturnReasonEntity reasonEntity = new OrderReturnReasonEntity();
@@ -78,9 +78,9 @@ public class GulimallOrderApplicationTests {
         }
     }
 
-    /**
+    *//**
      * AmqpAdmin创建交换机
-     */
+     *//*
     @Test
     public void createExchange(){
         //创建直连交换机---gulimall
@@ -89,9 +89,9 @@ public class GulimallOrderApplicationTests {
         amqpAdmin.declareExchange(directExchange);
         log.info("Exchange[{}]创建成功","gulimall.exchange.direct");
     }
-    /**
+    *//**
      * AmqpAdmin创建消息队列
-     */
+     *//*
     @Test
     public void createQueue(){
         //Queue类所属于amqp核心包
@@ -101,9 +101,9 @@ public class GulimallOrderApplicationTests {
         log.info("Queue[{}]创建成功","gulimall.queue");
     }
 
-    /**
+    *//**
      * AmqpAdmin创建队列与交换机的绑定关系
-     */
+     *//*
     @Test
     public void createBinding(){
         //Binding类所属于amqp核心包
@@ -116,6 +116,6 @@ public class GulimallOrderApplicationTests {
                 "rabbitmq",null);
         amqpAdmin.declareBinding(binding);
         log.info("Binding[{}]创建成功",binding);
-    }
+    }*/
 
 }

@@ -31,12 +31,12 @@ public class WareInfoController {
 
     /**
      * 查询商品的运费信息
-     * @param attrId 收获地址的Id
+     * @param addrId 收获地址的Id
      * @return
      */
     @GetMapping("/fare")
-    public R getFare(@RequestParam("attrId") Long attrId){
-        FareVO fare = wareInfoService.getFare(attrId);
+    public R getFare(@RequestParam("addrId") Long addrId){
+        FareVO fare = wareInfoService.getFare(addrId);
         return R.ok().setData(fare);
     }
 

@@ -19,8 +19,8 @@ import java.io.IOException;
  * @author: yama946
  */
 @Slf4j
-@RabbitListener(queues = {"gulimall.queue"})
-@Component
+//@RabbitListener(queues = {"gulimall.queue"})
+//@Component
 public class RabbitmqReceiveMessageTest {
     /**
      * 消息类型：
@@ -28,15 +28,15 @@ public class RabbitmqReceiveMessageTest {
      * 接收方法参数可以直接使用：
      *    class org.springframework.amqp.core.Message类型
      * @param message
-     */
-    /*@RabbitListener(queues = {"gulimall.queue"})
+     *//*
+    *//*@RabbitListener(queues = {"gulimall.queue"})
     public void testReciveMessage(Object message){
         log.info("接收到消息：{}",message);
         log.info("接收到消息类型：{}",message.getClass());
         //class org.springframework.amqp.core.Message
-    }*/
+    }*//*
 
-    /**
+    *//**
      * @RabbitListener--->queues：表示要监听的队列
      *
      * TODO rabbitmq消息接收消息监听器的使用
@@ -60,7 +60,7 @@ public class RabbitmqReceiveMessageTest {
      *      2).不会，只有一个消息处理完，方法运行结束才可以接收下一个消息。
      *
      * @param message
-     */
+     *//*
 //    @RabbitListener(queues = {"gulimall.queue"})
 //    public void testReciveMessage(Message message, OrderReturnReasonEntity content, Channel channel) throws InterruptedException {
 //        System.out.println("接收到消息体:"+content);
@@ -74,29 +74,29 @@ public class RabbitmqReceiveMessageTest {
 //        System.out.println("消息处理结束："+content.getName());
 //    }
 
-    /**
+    *//**
      * 对队列中消息对象1
      * @param message
      * @param content
      * @param channel
      * @throws InterruptedException
-     */
+     *//*
     @RabbitHandler
     public void testReciveMessage(Message message, OrderReturnReasonEntity content, Channel channel) throws InterruptedException {
         System.out.println("接收到消息体:"+content);
         System.out.println("消息处理结束："+content.getName());
-        /**
+        *//**
          * 手动完成消息ack确认
-         */
+         *//*
         //deliveryTag在通道内是自增的参数
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         System.out.println("deliveryTag==>"+deliveryTag);
-        /**
+        *//**
          * 前收货物，ack消息
          * 参数：
          *      1.message.getMessageProperties().getDeliveryTag()获取到的deliveryTag
          *      2.是否批量确认消息，false表示只确认自己当前处理消息
-         */
+         *//*
         try {
             if (deliveryTag%2==0){
                 //签收货物
@@ -115,5 +115,5 @@ public class RabbitmqReceiveMessageTest {
     public void testReciveMessage( OrderEntity content) throws InterruptedException {
         System.out.println("接收到消息体:"+content);
         System.out.println("消息处理结束："+content.getId());
-    }
+    }*/
 }

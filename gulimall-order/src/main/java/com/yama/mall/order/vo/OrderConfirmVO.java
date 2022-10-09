@@ -54,7 +54,6 @@ public class OrderConfirmVO {
         int i =0;
         if (items!=null){
             for (OrderItemVO item : items){
-                BigDecimal multiply = item.getPrice().multiply(new BigDecimal(item.getCount().toString()));
                 i+=item.getCount();
             }
         }
@@ -65,14 +64,14 @@ public class OrderConfirmVO {
      * 获取商品总价
      * @return
      */
-    public BigDecimal getTotalPrice(){
+    public BigDecimal getTotalPrice() {
         //总价
         BigDecimal totalPrice = new BigDecimal("0");
         //判断商品，根据商品数量计算
         if (items!=null){
             for (OrderItemVO item : items){
                 BigDecimal multiply = item.getPrice().multiply(new BigDecimal(item.getCount().toString()));
-                totalPrice.add(multiply);
+                totalPrice = totalPrice.add(multiply);
             }
         }
         return totalPrice;
@@ -86,8 +85,6 @@ public class OrderConfirmVO {
      * @return
      */
     public BigDecimal getPayPrice(){
-        return getTotalPrice();
+        return this.getTotalPrice();
     }
-
-
 }

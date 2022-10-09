@@ -38,7 +38,7 @@ public class OrderItemVO {
 
 
     //查询库存状态
-    private Boolean hasStock;
+//    private Boolean hasStock;
 
     private BigDecimal weight;//重量，实际是需要参与运费计算的
 }

@@ -53,19 +53,19 @@ public class WareInfoServiceImpl extends ServiceImpl<WareInfoDao, WareInfoEntity
 
     /**
      * 根据收获地址查询运费信息
-     * @param attrId
+     * @param addrId
      * @return
      */
     @Override
-    public FareVO getFare(Long attrId) {
+    public FareVO getFare(Long addrId) {
         //TODO 远程调用用户系统查询收货地址
-        R addrInfo = memberFeignService.getInfo(attrId);
+        R addrInfo = memberFeignService.getInfo(addrId);
         FareVO fareInfo = new FareVO();
         MemberAddressInfoVO memberAddressInfo = addrInfo.getData("memberReceiveAddress", new TypeReference<MemberAddressInfoVO>() {});
         String detailAddress = memberAddressInfo.getDetailAddress();
         //TODO 简单固定运费，不进行业务复杂操作
         if (detailAddress!=null){
-            BigDecimal fare = new BigDecimal("18");
+            BigDecimal fare = new BigDecimal("18.00");
             fareInfo.setAddress(memberAddressInfo);
             fareInfo.setFare(fare);
             return fareInfo;

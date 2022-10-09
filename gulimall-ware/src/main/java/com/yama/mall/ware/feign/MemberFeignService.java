@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @FeignClient("gulimall-member")
 public interface MemberFeignService {
 
-    @RequestMapping("/member/memberReceiveAddressService/info/{id}")
+    @RequestMapping("/member/memberreceiveaddress/info/{id}")
     R getInfo(@PathVariable("id") Long id);
 }

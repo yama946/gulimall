@@ -25,6 +25,8 @@ buildNumber.properties
 **/application-dev.yml
 **/bootstrap.properties
 *.exe
+registry.conf
+
 
 
 

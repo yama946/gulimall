@@ -29,11 +29,11 @@ public interface WareFeignService {
 
     /**
      * 获取收货地址信息，运费信息
-     * @param attrId
+     * @param addrId
      * @return
      */
     @GetMapping("ware/wareinfo/fare")
-    R getFare(@RequestParam("attrId") Long attrId);
+    R getFare(@RequestParam("addrId") Long addrId);
 
     /**
      * 为某个订单锁定库存

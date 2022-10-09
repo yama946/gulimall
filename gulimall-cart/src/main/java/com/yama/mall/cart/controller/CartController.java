@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class CartController {
      * TODO debug-->远程调用异常，添加@ResponseBody远程调用返回为json数据
      * @return
      */
+    @ResponseBody
     @GetMapping("/concurrentUserCartItems")
     public List<CartItemVo> getconcurrentUserCartItems(){
         List<CartItemVo> cartItems = cartService.getUserCartItems();
