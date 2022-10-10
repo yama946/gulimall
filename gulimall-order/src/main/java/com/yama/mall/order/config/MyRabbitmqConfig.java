@@ -19,8 +19,6 @@ import javax.annotation.PostConstruct;
 public class MyRabbitmqConfig {
     @Autowired
     private RabbitTemplate rabbitTemplate;
-
-
     /**
      * 配置消息转换器，将消息转换成json发送
      * @return
@@ -51,7 +49,7 @@ public class MyRabbitmqConfig {
      *      消息也不回丢失，消息会变成ready状态。下一次新的消费者客户端连接重新消费信息。
      *
      */
-     @PostConstruct  //MyRabbitConfig对象创建完成以后，执行这个方法
+    @PostConstruct  //MyRabbitConfig对象创建完成以后，执行这个方法
     public void initRabbitTemplate() {
 
         /**

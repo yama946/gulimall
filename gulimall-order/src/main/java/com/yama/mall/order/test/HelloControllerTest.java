@@ -1,4 +1,4 @@
-package com.yama.mall.order.web;
+package com.yama.mall.order.test;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

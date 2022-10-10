@@ -1,11 +1,11 @@
 package com.yama.mall.order.test;
 
 import com.rabbitmq.client.Channel;
+import com.yama.mall.order.canstant.RabbitConstant;
 import com.yama.mall.order.entity.OrderEntity;
 import com.yama.mall.order.entity.OrderReturnReasonEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ import java.io.IOException;
  */
 @Slf4j
 //@RabbitListener(queues = {"gulimall.queue"})
-//@Component
+@Component
 public class RabbitmqReceiveMessageTest {
     /**
      * 消息类型：
@@ -28,15 +28,15 @@ public class RabbitmqReceiveMessageTest {
      * 接收方法参数可以直接使用：
      *    class org.springframework.amqp.core.Message类型
      * @param message
-     *//*
-    *//*@RabbitListener(queues = {"gulimall.queue"})
-    public void testReciveMessage(Object message){
-        log.info("接收到消息：{}",message);
-        log.info("接收到消息类型：{}",message.getClass());
-        //class org.springframework.amqp.core.Message
-    }*//*
+     */
+//    @RabbitListener(queues = {"gulimall.queue"})
+//    public void testReciveMessage(Object message){
+//        log.info("接收到消息：{}",message);
+//        log.info("接收到消息类型：{}",message.getClass());
+//        //class org.springframework.amqp.core.Message
+//    }
 
-    *//**
+    /**
      * @RabbitListener--->queues：表示要监听的队列
      *
      * TODO rabbitmq消息接收消息监听器的使用
@@ -74,46 +74,54 @@ public class RabbitmqReceiveMessageTest {
 //        System.out.println("消息处理结束："+content.getName());
 //    }
 
-    *//**
+    /**
      * 对队列中消息对象1
      * @param message
      * @param content
      * @param channel
      * @throws InterruptedException
-     *//*
-    @RabbitHandler
-    public void testReciveMessage(Message message, OrderReturnReasonEntity content, Channel channel) throws InterruptedException {
-        System.out.println("接收到消息体:"+content);
-        System.out.println("消息处理结束："+content.getName());
-        *//**
+     */
+//    @RabbitHandler
+//    public void testReciveMessage(Message message, OrderReturnReasonEntity content, Channel channel) throws InterruptedException {
+//        System.out.println("接收到消息体:"+content);
+//        System.out.println("消息处理结束："+content.getName());
+        /**
          * 手动完成消息ack确认
-         *//*
+         */
         //deliveryTag在通道内是自增的参数
-        long deliveryTag = message.getMessageProperties().getDeliveryTag();
-        System.out.println("deliveryTag==>"+deliveryTag);
-        *//**
-         * 前收货物，ack消息
+//        long deliveryTag = message.getMessageProperties().getDeliveryTag();
+//        System.out.println("deliveryTag==>"+deliveryTag);
+        /**
+         * 签收货物，ack消息
          * 参数：
          *      1.message.getMessageProperties().getDeliveryTag()获取到的deliveryTag
          *      2.是否批量确认消息，false表示只确认自己当前处理消息
-         *//*
-        try {
-            if (deliveryTag%2==0){
-                //签收货物
-                channel.basicAck(deliveryTag,false);
-            }else {
+         */
+//        try {
+//            if (deliveryTag%2==0){
+//                //签收货物
+//                channel.basicAck(deliveryTag,false);
+//            }else {
+//
+//            }
+//        } catch (IOException e) {
+//            //网络中断，签收失败
+//            e.printStackTrace();
+//        }
+//    }
 
-            }
-        } catch (IOException e) {
-            //网络中断，签收失败
-            e.printStackTrace();
-        }
-    }
 
+//    @RabbitHandler
+//    public void testReciveMessage( OrderEntity content) throws InterruptedException {
+//        System.out.println("接收到消息体:"+content);
+//        System.out.println("消息处理结束："+content.getId());
+//    }
 
-    @RabbitHandler
-    public void testReciveMessage( OrderEntity content) throws InterruptedException {
-        System.out.println("接收到消息体:"+content);
-        System.out.println("消息处理结束："+content.getId());
-    }*/
+//    @RabbitListener(queues = {RabbitConstant.ORDER_RELEASE_ORDER_QUEEU})
+//    public void getReleaseMessage(OrderEntity order, Message msg, Channel channel){
+//        log.info("接收到过期订单，订单详情:{}",order.getOrderSn());
+//        log.info("原生消息类型获取消息:{}",msg.getBody());
+//        //使用通道进行签收消息
+//    }
+
 }

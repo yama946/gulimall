@@ -22,6 +22,11 @@
     </properties>
 
     <dependencies>
+        <!--整合rabbitmq消息队列机制-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
         <!--启动seta分布式事务管理-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

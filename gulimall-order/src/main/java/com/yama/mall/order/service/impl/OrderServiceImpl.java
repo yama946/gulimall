@@ -5,11 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yama.mall.common.exception.NoStockException;
+import com.yama.mall.common.to.OrderTo;
 import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.common.utils.Query;
 import com.yama.mall.common.utils.R;
 import com.yama.mall.common.vo.MemberEntityVO;
 import com.yama.mall.order.canstant.OrderConstant;
+import com.yama.mall.order.canstant.RabbitConstant;
 import com.yama.mall.order.dao.OrderDao;
 import com.yama.mall.order.entity.OrderEntity;
 import com.yama.mall.order.entity.OrderItemEntity;
@@ -24,8 +27,9 @@ import com.yama.mall.order.service.OrderService;
 import com.yama.mall.order.to.OrderCreateTO;
 import com.yama.mall.order.to.SpuInfoTo;
 import com.yama.mall.order.vo.*;
-import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -76,6 +80,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Autowired
     private OrderItemService orderItemService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
 
 
@@ -165,7 +172,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     // @Transactional(isolation = Isolation.READ_COMMITTED) 设置事务的隔离级别
     // @Transactional(propagation = Propagation.REQUIRED)   设置事务的传播级别
     @Transactional(rollbackFor = Exception.class)
-    @GlobalTransactional(rollbackFor = Exception.class)
+//    @GlobalTransactional(rollbackFor = Exception.class) //seata的AT事务模式注解
     @Override
     public SubmitOrderResponseVO submitOrder(OrderSubmitVO vo) {
         confirmVOThreadLocal.set(vo);
@@ -227,13 +234,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     //库存锁定成功
                     response.setOrder(order.getOrder());
                     //5、TODO 远程扣减积分
-                    int i=10/0;
+//                    int i=10/0;
+                    //6、订单创建完成发送消息给MQ
+                    rabbitTemplate.convertAndSend(RabbitConstant.ORDER_EVENT_EXCHANGE,"order.create.order",order.getOrder());
                     return response;
                 }else {
                     //库存锁定失败，抛出异常
                     response.setCode(3);
                     log.debug("库存锁定异常");
-                    return response;
+                    throw new NoStockException("库存锁定异常");
                     //TODO 抛出库存异常---优化
                 }
             } else {
@@ -249,6 +258,36 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             //校验失败
         }*/
     }
+
+    /**
+     * 关闭订单操作
+     * @param order
+     */
+    @Override
+    public void closeOrder(OrderEntity order) {
+        //关闭订单之前先查询一下数据库，判断此订单状态是否已支付
+        OrderEntity orderInfo = this.getOne(new QueryWrapper<OrderEntity>().
+                eq("order_sn",order.getOrderSn()));
+
+        if (orderInfo.getStatus().equals(OrderStatusEnum.CREATE_NEW.getCode())) {
+            //待付款状态进行关单
+            OrderEntity orderUpdate = new OrderEntity();
+            orderUpdate.setId(orderInfo.getId());
+            orderUpdate.setStatus(OrderStatusEnum.CANCLED.getCode());
+            this.updateById(orderUpdate);
+
+            // 关单后，立即发送消息给库存服务，进行解锁库存
+            OrderTo orderTo = new OrderTo();
+            BeanUtils.copyProperties(orderInfo, orderTo);
+            try {
+                //TODO（柔性事务：消息可靠性） 确保每个消息发送成功，给每个消息做好日志记录，(给数据库保存每一个详细信息)保存每个消息的详细信息
+                rabbitTemplate.convertAndSend("order-event-exchange", "order.release.other", orderTo);
+            } catch (Exception e) {
+                //TODO 1、网络等问题，导致消息发送失败 2、定期扫描数据库，重新发送失败的消息
+            }
+        }
+    }
+
     /**
      * 保存订单所有数据
      * @param orderCreateTo

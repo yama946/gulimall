@@ -1,13 +1,15 @@
-package com.yama.mall.order.web;
+package com.yama.mall.order.test;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.yama.mall.order.canstant.RabbitConstant;
 import com.yama.mall.order.entity.OrderEntity;
 import com.yama.mall.order.entity.OrderReturnReasonEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
@@ -26,8 +28,6 @@ public class RabbitControllerTest {
     private RabbitTemplate rabbitTemplate;
 
     String exchange = "gulimall.exchange.direct";
-
-    String queueStr = "gulimall.queue";
 
     @GetMapping("test/sendMQ")
     public String testSendMessage(){
@@ -51,6 +51,19 @@ public class RabbitControllerTest {
             }
         }
         return "OK";
+    }
+
+    /**
+     * 发送延时队列消息
+     * @return
+     */
+    @GetMapping("/test/send/order")
+    public String sendMessageToDelayQueue(){
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setOrderSn(IdWorker.getTimeId());
+        orderEntity.setCreateTime(new Date());
+        rabbitTemplate.convertAndSend(RabbitConstant.ORDER_EVENT_EXCHANGE,RabbitConstant.CREATE_ROUTING_KEY,orderEntity);
+        return "send message success!!!!!!!";
     }
 
 

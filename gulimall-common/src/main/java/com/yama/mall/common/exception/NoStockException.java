@@ -12,6 +12,10 @@ public class NoStockException extends RuntimeException {
         super("商品id为"+skuId+"没有库存异常");
     }
 
+    public NoStockException(String message){
+        super(message);
+    }
+
     public Long getSkuId() {
         return skuId;
     }
