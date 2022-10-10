@@ -21,6 +21,11 @@
 
 
     <dependencies>
+        <!--整合thymleaf模板-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.yama.mall</groupId>
             <artifactId>gulimall-common</artifactId>

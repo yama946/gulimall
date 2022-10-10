@@ -289,6 +289,42 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     /**
+     * 获取订单支付信息，封装为PayVo
+     * @param orderSn
+     * @return
+     */
+    @Override
+    public PayVo getOrderPayVo(String orderSn) {
+        PayVo payVo = new PayVo();
+        OrderEntity order = this.getOrderByOrderSn(orderSn);
+        //TODO 将支付总额BigDicmal处理成保留两位小数进行设置，四位小数支付宝提交异常
+        //设置支付金额
+        BigDecimal scale = order.getPayAmount().setScale(2, BigDecimal.ROUND_UP);
+        payVo.setTotal_amount(scale.toString());
+        //设置订单号
+        payVo.setOut_trade_no(orderSn);
+        //查询第一个商品名进行设置为标
+        List<OrderItemEntity> orderItem = orderItemService.list(new QueryWrapper<OrderItemEntity>().eq("order_sn", orderSn));
+        OrderItemEntity item = orderItem.get(0);
+        payVo.setSubject(item.getSkuName());
+        //设置商品描述
+        payVo.setBody(item.getSpuName());
+        return payVo;
+    }
+
+    /**
+     * 根据订单号获取Order对象
+     * @param orderSn
+     * @return
+     */
+    private OrderEntity getOrderByOrderSn(String orderSn) {
+        OrderDao orderMaper = this.getBaseMapper();
+        OrderEntity order = orderMaper.selectOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderSn));
+        return order;
+    }
+
+
+    /**
      * 保存订单所有数据
      * @param orderCreateTo
      */

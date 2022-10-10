@@ -9,6 +9,9 @@ spring:
     name: gulimall-member
   profiles:
     active: dev
+# 配置thymleaf
+  thymeleaf:
+    cache: false
 
 # 配置mybatis-plus
 mybatis-plus:

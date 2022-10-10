@@ -22,6 +22,12 @@
 
 
     <dependencies>
+        <!--整合支付宝支付功能-->
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>4.34.0.ALL</version>
+        </dependency>
         <!--启动seta分布式事务管理-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

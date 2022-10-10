@@ -5,6 +5,7 @@ import com.yama.mall.common.utils.PageUtils;
 import com.yama.mall.order.entity.OrderEntity;
 import com.yama.mall.order.vo.OrderConfirmVO;
 import com.yama.mall.order.vo.OrderSubmitVO;
+import com.yama.mall.order.vo.PayVo;
 import com.yama.mall.order.vo.SubmitOrderResponseVO;
 
 import java.util.Map;
@@ -35,5 +36,7 @@ public interface OrderService extends IService<OrderEntity> {
     SubmitOrderResponseVO submitOrder(OrderSubmitVO vo);
 
     void closeOrder(OrderEntity order);
+
+    PayVo getOrderPayVo(String orderSn);
 }
 
